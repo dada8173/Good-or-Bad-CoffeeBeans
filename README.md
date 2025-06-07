@@ -1,6 +1,6 @@
 
 <p align="center">
-  <img src="./samplePhoto/logo.jpg" width="160"/>
+  <img src="./samplePhoto/logo.png" width="160"/>
 </p>
 
 <h1 align="center">☕ Cofe_log：咖啡豆良品分類器 | Coffee Bean Classifier</h1>
@@ -73,14 +73,11 @@ Good-or-Bad-CoffeeBeans/
 
 ## 🖼️ 圖示展示 | Sample Images
 
-
-```markdown
 ### Good Bean
 <img src="./samplePhoto/goodsample.jpg" width="200"/>
 
 ### Bad Bean
 <img src="./samplePhoto/badsample.jpg" width="200"/>
-```
 
 ---
 
