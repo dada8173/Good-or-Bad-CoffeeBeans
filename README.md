@@ -32,7 +32,7 @@ Good-or-Bad-CoffeeBeans/
 ├── *.pth # 訓練完成模型 | Trained models
 ├── data_augment.ipynb # 資料增強腳本 | Data augmentation
 ├── use_cnn_train.ipynb # 自訂 CNN 訓練 | Custom CNN training
-├── try_use_OpenCV.ipynb # OpenCV 裁切照片 | Image cropping via OpenCV
+├── use_OpenCV.ipynb # OpenCV 裁切照片 | Image cropping via OpenCV
 └── README.md
 ```
 
