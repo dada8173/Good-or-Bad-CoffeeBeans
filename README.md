@@ -93,6 +93,7 @@ Good-or-Bad-CoffeeBeans/
 - 作者 | Author：dachen8173
 - 技術棧 | Stack：Python / PyTorch / OpenCV / Jupyter
 - 聯絡方式 | Contact：op.dada.op@gmail.com
+- instagram | da_chen_527 / cofe_log
 
 ---
 
