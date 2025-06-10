@@ -61,7 +61,7 @@ Good-or-Bad-CoffeeBeans/
 ---
 
 ## 📊 資料集類別 | Classes
-
+由我本人拍攝，透過opencv裁切後手工挑選。
 - `good`：外觀完整，顏色自然的好豆(我本人挑選的，非絕對專業!)
   *(good beans with intact and natural appearance)*
   *(Note: Manually selected; may not be professionally certified)*  
