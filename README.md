@@ -16,18 +16,43 @@
 
 ```
 Good-or-Bad-CoffeeBeans/
-├── crop_coffee_beans/
-│ ├── coffee_beans_photo/ # 原始圖片 | Raw photos
-│ ├── corp_augmented_data/ # 含咖啡豆背面照片背景擴增 | Augmented with background
-│ │ ├── back/
-│ │ ├── bad/
-│ │ └── good/
-│ ├── corp_augmented_dataNoback/ # 不含咖啡豆背面照片 | Background removed
-│ │ ├── bad/
-│ │ └── good/
-│ └── crop/
-│ ├── classByhands/ # 人工分類（含咖啡豆背面照片）| Manual labeling
-│ └── classByhandsNoback/ # 人工分類（不含咖啡豆背面照片）| Manual labeling
+├── coffee_beans_data/
+│ ├── ethiopia_washed/ # 衣索比亞水洗豆 | Ethiopia Washed
+│ │ ├── coffee_beans_photo/ # 原始圖片 | Raw photos
+│ │ ├── corp_augmented_data/ # 含咖啡豆背面照片背景擴增 | Augmented with background
+│ │ │ ├── back/
+│ │ │ ├── bad/
+│ │ │ └── good/
+│ │ ├── corp_augmented_dataNoback/ # 不含咖啡豆背面照片 | Background removed
+│ │ │ ├── bad/
+│ │ │ └── good/
+│ │ └── crop/
+│ │   ├── classByhands/ # 人工分類（含咖啡豆背面照片）| Manual labeling
+│ │   └── classByhandsNoback/ # 人工分類（不含咖啡豆背面照片）| Manual labeling
+│ ├── kenya_natural/ # 肯亞日曬豆 | Kenya Natural
+│ │ ├── coffee_beans_photo/ # 原始圖片 | Raw photos
+│ │ ├── corp_augmented_data/ # 含咖啡豆背面照片背景擴增 | Augmented with background
+│ │ │ ├── back/
+│ │ │ ├── bad/
+│ │ │ └── good/
+│ │ ├── corp_augmented_dataNoback/ # 不含咖啡豆背面照片 | Background removed
+│ │ │ ├── bad/
+│ │ │ └── good/
+│ │ └── crop/
+│ │   ├── classByhands/ # 人工分類（含咖啡豆背面照片）| Manual labeling
+│ │   └── classByhandsNoback/ # 人工分類（不含咖啡豆背面照片）| Manual labeling
+│ └── honduras_natural/ # 宏都拉斯日曬豆 | Honduras Natural
+│   ├── coffee_beans_photo/ # 原始圖片 | Raw photos
+│   ├── corp_augmented_data/ # 含咖啡豆背面照片背景擴增 | Augmented with background
+│   │ ├── back/
+│   │ ├── bad/
+│   │ └── good/
+│   ├── corp_augmented_dataNoback/ # 不含咖啡豆背面照片 | Background removed
+│   │ ├── bad/
+│   │ └── good/
+│   └── crop/
+│     ├── classByhands/ # 人工分類（含咖啡豆背面照片）| Manual labeling
+│     └── classByhandsNoback/ # 人工分類（不含咖啡豆背面照片）| Manual labeling
 ├── test/ # 測試圖片 | Test images
 ├── *.pth # 訓練完成模型 | Trained models
 ├── data_augment.ipynb # 資料增強腳本 | Data augmentation
@@ -69,6 +94,14 @@ Good-or-Bad-CoffeeBeans/
   *(defective beans with damage or discoloration)*
   *(Note: Manually selected; may not be professionally certified)*
 
+## 🌱 咖啡豆類型 | Coffee Bean Types
+
+| 類型 | 處理方式 | 特色 |
+|------|----------|------|
+| 衣索比亞水洗豆 | Ethiopia Washed | 明亮酸度，花香調性 |
+| 肯亞日曬豆 | Kenya Natural | 濃郁果香，甜度豐富 |
+| 宏都拉斯日曬豆 | Honduras Natural | 平衡風味，巧克力調性 |
+
 ---
 
 ## 🖼️ 圖示展示 | Sample Images
@@ -85,6 +118,7 @@ Good-or-Bad-CoffeeBeans/
 
 - [ ] 加入多視角融合（雙鏡頭）
 - [ ] 模型部署為 Web 或 Mobile 應用
+- [ ] 支援更多咖啡豆品種和處理方式
 
 ---
 
