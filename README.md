@@ -81,7 +81,18 @@ Good-or-Bad-CoffeeBeans/
 | 📦 資料處理 | 對咖啡豆圖片進行標準化、分類、增強 |
 | 🔬 模型訓練 | 使用 CNN 訓練良品 vs 瑕疵 |
 | 🧪 模型評估 | 分類報告、混淆矩陣、視覺化結果 |
-| ⚙️ 模型應用(尚未完成) | 可應用於實驗、分級流程或即時檢測 |
+| 🌐 網頁推論 | Flask + HTML 前端介面，支援模型選擇、照片上傳與分類結果展示 |
+| ⚙️ 模型應用 | 可應用於實驗、分級流程或即時檢測 |
+
+---
+
+## 🌐 網頁推論介面 | Web Interface
+
+1. 安裝依賴：`pip install flask pillow torch torchvision`（或參考 `requirements.txt` 自行建立環境）。
+2. 將訓練完成的 `.pth` 權重檔放到專案根目錄下的 `models/`，必要時新增對應的 JSON 設定檔（詳見 `models/README.md`）。
+3. 執行 `python app.py` 啟動 Flask 伺服器。
+4. 開啟瀏覽器連線至 <http://localhost:5000>。
+5. 前端頁面提供模型清單、圖片預覽、分類結果與各類別機率，協助快速驗證模型效果。
 
 ---
 
