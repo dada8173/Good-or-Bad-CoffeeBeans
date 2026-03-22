@@ -1,0 +1,7 @@
+{
+    "bean_type": "honduras_natural",
+    "architecture": "custom",
+    "img_size": 128,
+    "classes": ["bad", "good"],
+    "display_name": "宏都拉斯日曬豆 - Custom CNN (Noback)"
+}

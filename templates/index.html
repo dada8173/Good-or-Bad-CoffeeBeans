@@ -3,209 +3,131 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>咖啡豆良品分類器 - Web 介面</title>
+    <title>Cofe_log | 專業級咖啡豆 AI 分類器</title>
+    <!-- 引入 Outfit 字體 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
   </head>
   <body>
-    <main class="container">
-      <header class="page-header">
-        <h1>☕ Cofe_log 咖啡豆分類</h1>
-        <p class="lead">
-          上傳咖啡豆照片，選擇訓練好的模型，即時取得良品 / 瑕疵分類結果。
-        </p>
+    <!-- 背景裝飾 -->
+    <div class="bg-glow bg-glow-1"></div>
+    <div class="bg-glow bg-glow-2"></div>
+
+    <div class="dashboard-wrapper">
+      <header class="main-header">
+        <div class="logo">
+          <span class="icon">☕</span>
+          <h1>Cofe_log</h1>
+          <span class="badge">Professional</span>
+        </div>
+        <div class="status-indicators">
+          <div class="indicator" id="system-status">
+            <span class="dot active"></span> 系統在線
+          </div>
+          <div class="indicator" id="camera-status">
+            <span class="dot"></span> 相機未啟用
+          </div>
+        </div>
       </header>
 
-      {% if models %}
-      <section class="card" id="upload-card">
-        <h2>上傳照片並選擇模型</h2>
-        <form id="upload-form" method="post" enctype="multipart/form-data" novalidate>
-          <div class="field">
-            <label for="model-select">選擇豆種與模型</label>
-            <select id="model-select" name="model_key" required>
-              <option value="" disabled selected>請選擇模型</option>
-              {% for model in models %}
-              <option
-                value="{{ model.key }}"
-                data-bean="{{ model.bean_display_name }}"
-                data-classes="{{ model.classes | join('、') }}"
-                data-arch="{{ model.architecture_label }}"
-              >
-                {{ model.display_name }}{% if not model.path.exists() %}（⚠️ 未找到權重檔）{% endif %}
-              </option>
-              {% endfor %}
-            </select>
-            <p class="hint">
-              模型列表依據 <code>models</code> 資料夾內的設定與權重自動產生。
-            </p>
+      <main class="dashboard-grid">
+        <!-- 左側：視覺監測與操作區域 -->
+        <section class="panel glass-panel" id="visual-panel">
+          <div class="panel-header">
+            <h2>視覺監測視窗</h2>
+            <div class="panel-actions">
+              <button id="camera-toggle-btn" class="btn btn-secondary">開啟相機</button>
+              <button id="mode-toggle-btn" class="btn btn-outline">即時偵測：關</button>
+            </div>
+          </div>
+          
+          <div class="visual-viewport">
+            <video id="webcam-view" autoplay playsinline muted hidden></video>
+            <div id="visual-placeholder" class="placeholder">
+              <div class="placeholder-content">
+                <span class="icon">📷</span>
+                <p>啟動相機開始即時分類</p>
+              </div>
+            </div>
+            <img id="static-preview" class="preview-img" hidden />
+            
+            <!-- 偵測覆蓋層 -->
+            <div id="detection-overlay" class="overlay" hidden>
+              <div class="scanning-bar"></div>
+              <div class="detection-box"></div>
+            </div>
           </div>
 
-          <div class="field">
-            <label for="image-input">上傳咖啡豆照片</label>
-            <input id="image-input" type="file" name="image" accept="image/*" required />
-            <p class="hint">支援 JPG、PNG、BMP、WEBP，檔案大小上限 10 MB。</p>
+          <div class="panel-footer">
+            <div class="upload-control">
+              <label for="image-input" class="btn btn-primary">
+                <span class="icon">📤</span> 上傳靜態照片
+              </label>
+              <input id="image-input" type="file" name="image" accept="image/*" hidden />
+            </div>
+            <p class="hint">支援格式: JPG, PNG, WEBP (Max 10MB)</p>
+          </div>
+        </section>
+
+        <!-- 右側：分析數據與設定 -->
+        <aside class="sidebar">
+          <!-- 模型選擇卡片 -->
+          <div class="panel glass-panel" id="config-panel">
+            <h3>分類模型設定</h3>
+            <div class="field">
+              <label for="model-select">核心推理引擎</label>
+              <select id="model-select" class="custom-select">
+                <option value="" disabled selected>請選擇分析模型...</option>
+                {% for model in models %}
+                <option value="{{ model.key }}">{{ model.display_name }}</option>
+                {% endfor %}
+              </select>
+            </div>
           </div>
 
-          <div class="preview" id="preview-wrapper" hidden>
-            <p>預覽：</p>
-            <img id="preview-image" alt="咖啡豆照片預覽" />
+          <!-- 即時分析結果卡片 -->
+          <div class="panel glass-panel" id="result-panel">
+            <div class="panel-header">
+              <h3>智能分析數據</h3>
+              <div id="last-update" class="timestamp">--:--:--</div>
+            </div>
+
+            <div class="result-display">
+              <div class="main-prediction">
+                <span class="label-heading">主要預測結果</span>
+                <div id="result-label" class="prediction-value">Waiting...</div>
+              </div>
+
+              <div class="confidence-section">
+                <span class="label-heading">信賴區間</span>
+                <div id="probability-container" class="prob-bars">
+                  <!-- JS 動態插入 -->
+                </div>
+              </div>
+            </div>
           </div>
 
-          <div class="actions">
-            <button type="submit" id="submit-button">開始分類</button>
+          <!-- 模型統計卡片 -->
+          <div class="panel glass-panel mini">
+            <h3>深度學習架構</h3>
+            <div class="info-row">
+              <span class="attr">部署架構</span>
+              <span id="info-arch" class="val">-</span>
+            </div>
+            <div class="info-row">
+              <span class="attr">輸入維度</span>
+              <span id="info-size" class="val">-</span>
+            </div>
           </div>
-        </form>
-        <div class="message" id="error-box" hidden></div>
-      </section>
+        </aside>
+      </main>
+    </div>
 
-      <section class="card hidden" id="result-card">
-        <h2>分類結果</h2>
-        <dl class="result-meta">
-          <div>
-            <dt>使用模型</dt>
-            <dd id="result-model"></dd>
-          </div>
-          <div>
-            <dt>豆種</dt>
-            <dd id="result-bean"></dd>
-          </div>
-          <div>
-            <dt>主要預測</dt>
-            <dd id="result-label"></dd>
-          </div>
-        </dl>
-        <div id="result-description"></div>
-        <h3>類別機率</h3>
-        <ul id="probability-list" class="probability-list"></ul>
-      </section>
+    <!-- 隱藏畫布用於截幀 -->
+    <canvas id="frame-capture" width="640" height="640" style="display: none;"></canvas>
 
-      <section class="card" id="models-card">
-        <h2>可用模型總覽</h2>
-        <ul class="model-list">
-          {% for model in models %}
-          <li class="model-item">
-            <h3>{{ model.display_name }}</h3>
-            <p><strong>豆種：</strong>{{ model.bean_display_name }}（{{ model.bean_type }}）</p>
-            <p><strong>架構：</strong>{{ model.architecture_label }}</p>
-            <p><strong>分類標籤：</strong>{{ model.classes | join('、') }}</p>
-            <p><strong>權重檔：</strong>{{ model.path.name }}</p>
-            {% if model.description %}
-            <p class="description">{{ model.description }}</p>
-            {% endif %}
-            {% if not model.path.exists() %}
-            <p class="warning">⚠️ 未找到對應的權重檔案，請確認 <code>{{ model.path.name }}</code> 已放入 models 資料夾。</p>
-            {% endif %}
-          </li>
-          {% endfor %}
-        </ul>
-      </section>
-      {% else %}
-      <section class="card empty-state">
-        <h2>尚未找到可用的模型</h2>
-        <p>
-          請先將訓練好的 <code>.pth</code> 權重檔放入 <code>models/</code> 資料夾，並視需要新增對應的
-          JSON 設定檔，重新整理頁面後即可在此選擇模型進行推論。
-        </p>
-      </section>
-      {% endif %}
-    </main>
-
-    <script>
-      const form = document.getElementById("upload-form");
-      const previewWrapper = document.getElementById("preview-wrapper");
-      const previewImage = document.getElementById("preview-image");
-      const imageInput = document.getElementById("image-input");
-      const submitButton = document.getElementById("submit-button");
-      const errorBox = document.getElementById("error-box");
-      const resultCard = document.getElementById("result-card");
-      const resultModel = document.getElementById("result-model");
-      const resultBean = document.getElementById("result-bean");
-      const resultLabel = document.getElementById("result-label");
-      const resultDescription = document.getElementById("result-description");
-      const probabilityList = document.getElementById("probability-list");
-      const modelSelect = document.getElementById("model-select");
-
-      function resetMessage() {
-        errorBox.textContent = "";
-        errorBox.hidden = true;
-      }
-
-      function showError(message) {
-        errorBox.textContent = message;
-        errorBox.hidden = false;
-        resultCard.classList.add("hidden");
-      }
-
-      function updatePreview(file) {
-        if (!file) {
-          previewWrapper.hidden = true;
-          previewImage.removeAttribute("src");
-          return;
-        }
-        const url = URL.createObjectURL(file);
-        previewImage.onload = () => URL.revokeObjectURL(url);
-        previewImage.src = url;
-        previewWrapper.hidden = false;
-      }
-
-      imageInput?.addEventListener("change", () => {
-        const [file] = imageInput.files;
-        updatePreview(file);
-      });
-
-      form?.addEventListener("submit", async (event) => {
-        event.preventDefault();
-        resetMessage();
-
-        if (!modelSelect.value) {
-          showError("請先選擇模型。");
-          return;
-        }
-
-        const file = imageInput.files?.[0];
-        if (!file) {
-          showError("請先選擇要上傳的圖片。");
-          return;
-        }
-
-        const formData = new FormData(form);
-        submitButton.disabled = true;
-        submitButton.textContent = "分類中...";
-
-        try {
-          const response = await fetch("/api/predict", {
-            method: "POST",
-            body: formData,
-          });
-          const payload = await response.json();
-
-          if (!response.ok) {
-            showError(payload.error || "推論失敗，請稍後再試。");
-            return;
-          }
-
-          resultModel.textContent = payload.model.display_name;
-          resultBean.textContent = `${payload.model.bean_display_name}（${payload.model.bean_type}）`;
-          resultLabel.textContent = payload.prediction.label;
-          resultDescription.textContent = payload.model.description || "";
-
-          probabilityList.innerHTML = "";
-          payload.probabilities
-            .sort((a, b) => b.probability - a.probability)
-            .forEach((item) => {
-              const li = document.createElement("li");
-              li.innerHTML = `<span class="prob-label">${item.label}</span><span class="prob-value">${(item.probability * 100).toFixed(2)}%</span>`;
-              probabilityList.appendChild(li);
-            });
-
-          resultCard.classList.remove("hidden");
-        } catch (error) {
-          console.error(error);
-          showError("網路或伺服器發生錯誤，請稍後再試。");
-        } finally {
-          submitButton.disabled = false;
-          submitButton.textContent = "開始分類";
-        }
-      });
-    </script>
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
   </body>
 </html>

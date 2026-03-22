@@ -3,11 +3,11 @@
   <img src="./samplePhoto/logo.png" width="160"/>
 </p>
 
-<h1 align="center">☕ Cofe_log：咖啡豆良品分類器 | Coffee Bean Classifier</h1>
+<h1 align="center">☕ Cofe_log：專業級咖啡豆 AI 分類器 | Coffee Bean Classifier</h1>
 
 <p align="center">
-  利用深度學習模型，辨識咖啡豆的良品與瑕疵豆。<br>
-  Use deep learning to classify good and defective coffee beans.
+  利用深度學習模型與即時影像處理技術，精準辨識咖啡豆的良品與瑕疵。<br>
+  Advanced Real-time Deep Learning System for Coffee Bean Quality Inspection.
 </p>
 
 ---
@@ -16,48 +16,13 @@
 
 ```
 Good-or-Bad-CoffeeBeans/
-├── coffee_beans_data/
-│ ├── ethiopia_washed/ # 衣索比亞水洗豆 | Ethiopia Washed
-│ │ ├── coffee_beans_photo/ # 原始圖片 | Raw photos
-│ │ ├── corp_augmented_data/ # 含咖啡豆背面照片背景擴增 | Augmented with background
-│ │ │ ├── back/
-│ │ │ ├── bad/
-│ │ │ └── good/
-│ │ ├── corp_augmented_dataNoback/ # 不含咖啡豆背面照片 | Background removed
-│ │ │ ├── bad/
-│ │ │ └── good/
-│ │ └── crop/
-│ │   ├── classByhands/ # 人工分類（含咖啡豆背面照片）| Manual labeling
-│ │   └── classByhandsNoback/ # 人工分類（不含咖啡豆背面照片）| Manual labeling
-│ ├── kenya_natural/ # 肯亞日曬豆 | Kenya Natural
-│ │ ├── coffee_beans_photo/ # 原始圖片 | Raw photos
-│ │ ├── corp_augmented_data/ # 含咖啡豆背面照片背景擴增 | Augmented with background
-│ │ │ ├── back/
-│ │ │ ├── bad/
-│ │ │ └── good/
-│ │ ├── corp_augmented_dataNoback/ # 不含咖啡豆背面照片 | Background removed
-│ │ │ ├── bad/
-│ │ │ └── good/
-│ │ └── crop/
-│ │   ├── classByhands/ # 人工分類（含咖啡豆背面照片）| Manual labeling
-│ │   └── classByhandsNoback/ # 人工分類（不含咖啡豆背面照片）| Manual labeling
-│ └── honduras_natural/ # 宏都拉斯日曬豆 | Honduras Natural
-│   ├── coffee_beans_photo/ # 原始圖片 | Raw photos
-│   ├── corp_augmented_data/ # 含咖啡豆背面照片背景擴增 | Augmented with background
-│   │ ├── back/
-│   │ ├── bad/
-│   │ └── good/
-│   ├── corp_augmented_dataNoback/ # 不含咖啡豆背面照片 | Background removed
-│   │ ├── bad/
-│   │ └── good/
-│   └── crop/
-│     ├── classByhands/ # 人工分類（含咖啡豆背面照片）| Manual labeling
-│     └── classByhandsNoback/ # 人工分類（不含咖啡豆背面照片）| Manual labeling
-├── test/ # 測試圖片 | Test images
-├── *.pth # 訓練完成模型 | Trained models
-├── data_augment.ipynb # 資料增強腳本 | Data augmentation
-├── use_cnn_train.ipynb # 自訂 CNN 訓練 | Custom CNN training
-├── use_OpenCV.ipynb # OpenCV 裁切照片 | Image cropping via OpenCV
+├── models/             # 已訓練模型與 JSON 設定 | Trained models & configs
+├── static/             # 全新 Glassmorphism UI 素材 | Modern UI assets
+├── templates/          # 網頁模板 (index.html) | Web templates
+├── app.py              # Flask 後端 (支援即時偵測 API) | Backend with Real-time API
+├── train_all.py        # 自動化多豆種訓練腳本 | Automated training script
+├── coffee_beans_data/  # 原始與增強資料集 | Datasets
+├── use_cnn_train.ipynb # 訓練腳本原始稿 | Training source
 └── README.md
 ```
 
@@ -65,31 +30,79 @@ Good-or-Bad-CoffeeBeans/
 
 ## 🧠 模型資訊 | Model Info
 
-- 框架 | Framework：**PyTorch**
-- 架構 | Architecture：自定義 CNN
-- 增強 | Augmentations：
-  - 旋轉 / 翻轉 / 色彩變化 / 模糊 / 雜訊
-- 訓練策略 | Training Strategy：
-  - 使用 EarlyStopping 儲存最佳權重
+- **框架 | Framework**：PyTorch
+- **架構 | Architecture**：Custom CNN (針對咖啡豆特徵優化)
+- **已部署豆種**：
+  - 衣索比亞水洗豆 (Ethiopia Washed) - `Custom CNN`
+  - 宏都拉斯日曬豆 (Honduras Natural) - `Custom CNN`
+- **訓練策略**：
+  - 80/20 資料分割，使用 Adam 優化器。
+  - 導入 EarlyStopping 確保最佳泛化能力。
 
 ---
 
-## 🧪 功能介紹 | Features
+## 🧪 核心功能 | Core Features
 
 | 功能 | 描述 |
 |------|------|
-| 📦 資料處理 | 對咖啡豆圖片進行標準化、分類、增強 |
-| 🔬 模型訓練 | 使用 CNN 訓練良品 vs 瑕疵 |
-| 🧪 模型評估 | 分類報告、混淆矩陣、視覺化結果 |
-| 🌐 網頁推論 | Flask + HTML 前端介面，支援模型選擇、照片上傳與分類結果展示 |
-| ⚙️ 模型應用 | 可應用於實驗、分級流程或即時檢測 |
+| 🎨 **Glassmorphism UI** | 專業級毛玻璃質感儀表板，支援暗色模式與動態視覺效果。 |
+| 📹 **即時影像偵測** | 整合 WebRTC，支援攝影機現場即時分類，無需手動上傳。 |
+| 🚀 **快速推論 API** | 專為即時幀處理設計的 `/api/predict_frame` 接口。 |
+| 📊 **智能數據面板** | 即時顯示預測標籤、詳細置信度百分比與模型架構資訊。 |
+| 📂 **自動化部署** | 掃描 `models/` 資料夾自動載入可用模型與對應設定。 |
 
 ---
 
-## 🌐 網頁推論介面 | Web Interface
+## 🚀 啟動與使用 | Getting Started
 
-1. 安裝依賴：`pip install flask pillow torch torchvision`（或參考 `requirements.txt` 自行建立環境）。
-2. 將訓練完成的 `.pth` 權重檔放到專案根目錄下的 `models/`，必要時新增對應的 JSON 設定檔（詳見 `models/README.md`）。
+### 環境準備
+1. 建議使用 Conda 建立環境：
+   ```bash
+   conda create -n coffee-beans-env python=3.10
+   conda activate coffee-beans-env
+   pip install -r requirements.txt
+   ```
+
+### 啟動服務
+1. 執行 `python app.py` 啟動 Flask 伺服器。
+2. 開啟瀏覽器連線至 <http://localhost:5000>。
+
+### 操作指南
+1. **選擇模型**：在右側面板選擇預計分析的豆種。
+2. **即時監測**：點擊「開啟相機」後，啟動「即時偵測」。AI 將不斷分析視窗中的影像。
+3. **結果反饋**：系統將即時在預測面板更新結果；「Good」標示為綠色，「Bad」標示為紅色。
+
+---
+
+## 🖼️ 介面展示 | UI Showcase
+
+### 專業儀表板 (Professional Dashboard)
+![Dashboard Screenshot](file:///C:/Users/dachen/.gemini/antigravity/brain/ffbbab78-2eac-4a9a-9e93-34db6a862fac/verify_new_ui_and_realtime_1774097174040.webp)
+*利用毛玻璃效果與暗色系配色，打造極具科技感的 AI 分類體驗。*
+
+---
+
+## 📊 資料集類別 | Classes
+
+由我本人拍攝，透過 OpenCV 裁切後手工挑選。
+- `good`：外觀完整，顏色自然的好豆。
+- `bad`：破裂、霉變、色澤異常的瑕疵豆。
+
+---
+
+## 👨‍💻 開發者資訊 | About the Developer
+
+- 作者 | Author：dachen8173
+- 技術棧 | Stack：Python / PyTorch / Flask / WebRTC / Vanilla CSS
+- 聯絡方式 | Contact：op.dada.op@gmail.com
+- Instagram | [da_chen_527](https://www.instagram.com/da_chen_527) / [cofe_log](https://www.instagram.com/cofe_log)
+
+---
+
+## 📜 授權 | License
+
+MIT License – 歡迎使用、改進並回饋社群！
+要時新增對應的 JSON 設定檔（詳見 `models/README.md`）。
 3. 執行 `python app.py` 啟動 Flask 伺服器。
 4. 開啟瀏覽器連線至 <http://localhost:5000>。
 5. 前端頁面提供模型清單、圖片預覽、分類結果與各類別機率，協助快速驗證模型效果。

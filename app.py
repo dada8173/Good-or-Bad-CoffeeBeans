@@ -1,5 +1,5 @@
-from __future__ import annotations
-
+import base64
+import io
 import json
 import logging
 import os
@@ -380,6 +380,38 @@ def api_predict():
         return jsonify({"error": f"模型推論失敗：{exc}"}), 500
 
     return jsonify(result)
+
+
+@app.post("/api/predict_frame")
+def api_predict_frame():
+    """處理即時影像幀 (Base64)"""
+    if not MODEL_LOOKUP:
+        return jsonify({"error": "尚未載入模型。"}), 400
+
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "缺少資料體。"}), 400
+
+    model_key = data.get("model_key")
+    image_b64 = data.get("image")
+
+    if not model_key or model_key not in MODEL_LOOKUP:
+        return jsonify({"error": "無效的模型 key。"}), 400
+    if not image_b64:
+        return jsonify({"error": "缺少影像資料。"}), 400
+
+    try:
+        # 去除 header (data:image/jpeg;base64,...)
+        if "," in image_b64:
+            image_b64 = image_b64.split(",")[1]
+
+        image_data = base64.b64decode(image_b64)
+        image = Image.open(io.BytesIO(image_data))
+        result = predict_image(model_key, image)
+        return jsonify(result)
+    except Exception as exc:
+        logging.exception("幀預測失敗：%s", exc)
+        return jsonify({"error": str(exc)}), 500
 
 
 @app.get("/api/models")
