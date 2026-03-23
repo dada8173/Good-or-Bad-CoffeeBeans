@@ -14,6 +14,12 @@ pinned: false
 <h1 align="center">☕ Cofe_log：專業級咖啡豆 AI 分類器 | Coffee Bean Classifier</h1>
 
 <p align="center">
+  <a href="https://huggingface.co/spaces/dada8173/coffee-bean-classifier" target="_blank">
+    <img src="https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Spaces-blue" alt="Hugging Face Spaces">
+  </a>
+</p>
+
+<p align="center">
   利用深度學習模型與即時影像處理技術，精準辨識咖啡豆的良品與瑕疵。<br>
   Advanced Real-time Deep Learning System for Coffee Bean Quality Inspection.
 </p>
