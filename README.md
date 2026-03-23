@@ -1,3 +1,11 @@
+---
+title: Coffee Bean Classifier
+emoji: ☕
+colorFrom: brown
+colorTo: orange
+sdk: docker
+pinned: false
+---
 
 <p align="center">
   <img src="./samplePhoto/logo.png" width="160"/>

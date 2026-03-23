@@ -27,6 +27,9 @@ const staticPreview = document.getElementById("static-preview");
 const overlay = document.getElementById("detection-overlay");
 const canvas = document.getElementById("frame-capture");
 const cameraStatusDot = document.querySelector("#camera-status .dot");
+const fullscreenBtn = document.getElementById("fullscreen-btn");
+const uploadArea = document.getElementById("upload-area");
+const visualViewport = document.querySelector(".visual-viewport");
 
 // 初始化
 document.addEventListener("DOMContentLoaded", () => {
@@ -38,6 +41,105 @@ function setupEventListeners() {
   modeBtn.addEventListener("click", toggleDetection);
   modelSelect.addEventListener("change", updateModelInfo);
   imageInput.addEventListener("change", handleFileUpload);
+
+  // 頁籤切換
+  document.querySelectorAll(".tab-btn").forEach((btn) => {
+    btn.addEventListener("click", () => switchTab(btn));
+  });
+
+  // 範例縮圖點擊
+  document.querySelectorAll(".example-thumb").forEach((thumb) => {
+    thumb.addEventListener("click", () => selectExample(thumb));
+  });
+
+  // 全螢幕切換
+  fullscreenBtn.addEventListener("click", toggleFullscreen);
+
+  // 拖放上傳
+  setupDragAndDrop();
+}
+
+function toggleFullscreen() {
+  if (!document.fullscreenElement) {
+    visualViewport.requestFullscreen().catch(err => {
+      console.error(`無法切換全螢幕: ${err.message}`);
+    });
+  } else {
+    document.exitFullscreen();
+  }
+}
+
+function setupDragAndDrop() {
+  ["dragenter", "dragover", "dragleave", "drop"].forEach(eventName => {
+    uploadArea.addEventListener(eventName, (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+    }, false);
+  });
+
+  ["dragenter", "dragover"].forEach(eventName => {
+    uploadArea.addEventListener(eventName, () => {
+      uploadArea.classList.add("drag-over");
+    }, false);
+  });
+
+  ["dragleave", "drop"].forEach(eventName => {
+    uploadArea.addEventListener(eventName, () => {
+      uploadArea.classList.remove("drag-over");
+    }, false);
+  });
+
+  uploadArea.addEventListener("drop", (e) => {
+    const dt = e.dataTransfer;
+    const files = dt.files;
+    if (files.length > 0) {
+      const mockEvent = { target: { files: files } };
+      handleFileUpload(mockEvent);
+    }
+  }, false);
+}
+
+function switchTab(clickedBtn) {
+  const targetId = clickedBtn.dataset.target;
+  
+  // 更新按鈕狀態
+  document.querySelectorAll(".tab-btn").forEach(btn => btn.classList.remove("active"));
+  clickedBtn.classList.add("active");
+
+  // 更新內容顯示
+  document.querySelectorAll(".tab-content").forEach(content => content.classList.remove("active"));
+  document.getElementById(targetId).classList.add("active");
+}
+
+async function selectExample(thumb) {
+  if (!modelSelect.value) {
+    alert("請先選擇一個推理模型。");
+    return;
+  }
+
+  // 更新選中樣式
+  document.querySelectorAll(".example-thumb").forEach(t => t.classList.remove("active"));
+  thumb.classList.add("active");
+
+  // 停止相機（如果正在串流）
+  if (state.isStreaming) stopCamera();
+
+  // 更新預覽
+  staticPreview.src = thumb.src;
+  staticPreview.hidden = false;
+  visualPlaceholder.hidden = true;
+  webcamView.hidden = true;
+
+  // 執行預測
+  // 我們將圖片繪製到隱藏畫布中，以便複用 captureAndPredict 的邏輯
+  const img = new Image();
+  img.crossOrigin = "Anonymous";
+  img.onload = () => {
+    const ctx = canvas.getContext("2d");
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+    captureAndPredict(); // 此函數會從畫布讀取並發送 API
+  };
+  img.src = thumb.src;
 }
 
 // 相機控制
@@ -176,6 +278,18 @@ function updateUI(data) {
     `;
     probContainer.appendChild(bar);
   });
+
+  // 智能視覺警示：瑕疵豆且置信度 > 90%
+  const badProb = data.probabilities.find(p => p.label === 'bad')?.probability || 0;
+  if (data.prediction.label === 'bad' && badProb > 0.9) {
+    visualViewport.classList.add("alert-bad");
+    // 3秒後自動移除警示效果
+    setTimeout(() => {
+      visualViewport.classList.remove("alert-bad");
+    }, 3000);
+  } else {
+    visualViewport.classList.remove("alert-bad");
+  }
 }
 
 function updateModelInfo() {

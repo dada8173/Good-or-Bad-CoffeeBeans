@@ -38,6 +38,9 @@
           <div class="panel-header">
             <h2>視覺監測視窗</h2>
             <div class="panel-actions">
+              <button id="fullscreen-btn" class="fullscreen-btn" title="全螢幕">
+                <span class="icon">⛶</span>
+              </button>
               <button id="camera-toggle-btn" class="btn btn-secondary">開啟相機</button>
               <button id="mode-toggle-btn" class="btn btn-outline">即時偵測：關</button>
             </div>
@@ -56,18 +59,47 @@
             <!-- 偵測覆蓋層 -->
             <div id="detection-overlay" class="overlay" hidden>
               <div class="scanning-bar"></div>
+              <div class="scanning-grid"></div>
               <div class="detection-box"></div>
             </div>
           </div>
 
           <div class="panel-footer">
-            <div class="upload-control">
-              <label for="image-input" class="btn btn-primary">
-                <span class="icon">📤</span> 上傳靜態照片
-              </label>
-              <input id="image-input" type="file" name="image" accept="image/*" hidden />
+            <div class="gallery-tabs">
+              <button class="tab-btn active" data-target="upload-area">自定義照片</button>
+              <button class="tab-btn" data-target="example-area">範例照片庫</button>
             </div>
-            <p class="hint">支援格式: JPG, PNG, WEBP (Max 10MB)</p>
+
+            <div id="upload-area" class="tab-content active">
+              <div class="upload-control">
+                <label for="image-input" class="btn btn-primary">
+                  <span class="icon">📤</span> 上傳靜態照片
+                </label>
+                <input id="image-input" type="file" name="image" accept="image/*" hidden />
+              </div>
+              <p class="hint">支援格式: JPG, PNG, WEBP (Max 10MB)</p>
+            </div>
+
+            <div id="example-area" class="tab-content">
+              <div class="example-grid">
+                <div class="example-group">
+                  <span class="group-label success">優質豆 (Good)</span>
+                  <div class="thumbnails">
+                    <img src="/static/assets/examples/good/good1.jpg" class="example-thumb" data-label="good" />
+                    <img src="/static/assets/examples/good/good2.jpg" class="example-thumb" data-label="good" />
+                    <img src="/static/assets/examples/good/good3.jpg" class="example-thumb" data-label="good" />
+                  </div>
+                </div>
+                <div class="example-group">
+                  <span class="group-label danger">瑕疵豆 (Bad)</span>
+                  <div class="thumbnails">
+                    <img src="/static/assets/examples/bad/bad1.jpg" class="example-thumb" data-label="bad" />
+                    <img src="/static/assets/examples/bad/bad2.jpg" class="example-thumb" data-label="bad" />
+                    <img src="/static/assets/examples/bad/bad3.jpg" class="example-thumb" data-label="bad" />
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 
@@ -101,7 +133,7 @@
               </div>
 
               <div class="confidence-section">
-                <span class="label-heading">信賴區間</span>
+                <span class="label-heading" data-tooltip="AI 對此預測結果的確定程度">信賴區間 ⓘ</span>
                 <div id="probability-container" class="prob-bars">
                   <!-- JS 動態插入 -->
                 </div>
@@ -111,7 +143,7 @@
 
           <!-- 模型統計卡片 -->
           <div class="panel glass-panel mini">
-            <h3>深度學習架構</h3>
+            <h3 data-tooltip="顯示當前模型採用的人工智慧運算架構">深度學習架構 ⓘ</h3>
             <div class="info-row">
               <span class="attr">部署架構</span>
               <span id="info-arch" class="val">-</span>
