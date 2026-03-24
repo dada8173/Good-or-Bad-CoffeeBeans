@@ -86,6 +86,35 @@ python app.py
 
 ---
 
+## 🛠️ 複現與訓練指南 | Reproduction & Training Guide
+
+想要從零開始訓練您自己的咖啡豆分類模型？請遵循以下步驟：
+
+### 1. 資料準備 (Data Preparation)
+由於資料集較大，原始圖片並未上傳至 GitHub。請按照以下結構放置您的圖片：
+- **路徑**：`coffee_beans_data/{bean_type}/crop/classByhands/`
+- **子目錄**：`good/` (良品) 與 `bad/` (瑕疵)。
+- **支援豆種**：`ethiopia_washed`, `kenya_natural`, `honduras_natural`。
+
+### 2. 資料增強 (Data Augmentation)
+為了提高模型的泛化能力與平衡樣本量，請執行：
+- **檔案**：`data_augment.ipynb`
+- **操作**：依序執行 Notebook 中的所有儲存格。它會讀取原始圖片並套用隨機旋轉、亮度調整、雜訊注入等技術。
+- **產出**：增強後的圖片將儲存在 `{bean_type}/corp_augmented_dataNoback/` 中。
+
+### 3. 模型訓練 (Model Training)
+準備好資料後，即可執行自動化訓練腳本：
+```bash
+python train_all.py
+```
+- **流程**：該腳本會遍歷所有豆種，自動執行：80/20 資料分割 -> Custom CNN 架構初始化 -> Adam 優化器訓練 -> EarlyStopping 監控。
+- **模型儲存**：訓練完成且驗證損失最低的模型將以 `.pth` 格式儲存在 `models/` 資料夾中。
+
+### 4. 運行應用程式 (Run App)
+確保 `models/` 下有對應的 `.pth` 與 `.json` 設定檔後，執行 `python app.py` 即可在本地或 Hugging Face 上啟動即時偵測！
+
+---
+
 ## 📂 專案結構 | Project Structure
 
 ```text
