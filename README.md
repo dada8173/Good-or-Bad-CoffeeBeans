@@ -11,7 +11,8 @@ pinned: false
   <img src="./samplePhoto/logo.png" width="160"/>
 </p>
 
-<h1 align="center">☕ Cofe_log：專業級咖啡豆 AI 分類器 | Coffee Bean Classifier</h1>
+<h1 align="center">☕ Cofe_log：專業級咖啡豆 AI 分類器</h1>
+<p align="center"><b>Coffee Bean Classifier</b></p>
 
 <p align="center">
   <a href="https://huggingface.co/spaces/dada8173/coffee-bean-classifier" target="_blank">
@@ -21,41 +22,12 @@ pinned: false
 
 <p align="center">
   利用深度學習模型與即時影像處理技術，精準辨識咖啡豆的良品與瑕疵。<br>
-  Advanced Real-time Deep Learning System for Coffee Bean Quality Inspection.
+  <i>Advanced Real-time Deep Learning System for Coffee Bean Quality Inspection.</i>
 </p>
 
 ---
 
-## 📂 專案結構 | Project Structure
-
-```
-Good-or-Bad-CoffeeBeans/
-├── models/             # 已訓練模型與 JSON 設定 | Trained models & configs
-├── static/             # 全新 Glassmorphism UI 素材 | Modern UI assets
-├── templates/          # 網頁模板 (index.html) | Web templates
-├── app.py              # Flask 後端 (支援即時偵測 API) | Backend with Real-time API
-├── train_all.py        # 自動化多豆種訓練腳本 | Automated training script
-├── coffee_beans_data/  # 原始與增強資料集 | Datasets
-├── use_cnn_train.ipynb # 訓練腳本原始稿 | Training source
-└── README.md
-```
-
----
-
-## 🧠 模型資訊 | Model Info
-
-- **框架 | Framework**：PyTorch
-- **架構 | Architecture**：Custom CNN (針對咖啡豆特徵優化)
-- **已部署豆種**：
-  - 衣索比亞水洗豆 (Ethiopia Washed) - `Custom CNN`
-  - 宏都拉斯日曬豆 (Honduras Natural) - `Custom CNN`
-- **訓練策略**：
-  - 80/20 資料分割，使用 Adam 優化器。
-  - 導入 EarlyStopping 確保最佳泛化能力。
-
----
-
-## 🧪 核心功能 | Core Features
+## 🌟 核心亮點 | Core Features
 
 | 功能 | 描述 |
 |------|------|
@@ -67,109 +39,93 @@ Good-or-Bad-CoffeeBeans/
 
 ---
 
-## 🚀 啟動與使用 | Getting Started
+## 🚀 快速上手 | Quick Start
 
-### 環境準備
-1. 建議使用 Conda 建立環境：
-   ```bash
-   conda create -n coffee-beans-env python=3.10
-   conda activate coffee-beans-env
-   pip install -r requirements.txt
-   ```
+### 1. 環境準備
+建議使用 Conda 建立環境（Python 3.10+）：
+```bash
+conda create -n coffee-beans-env python=3.10
+conda activate coffee-beans-env
+pip install -r requirements.txt
+```
 
-### 啟動服務
-1. 執行 `python app.py` 啟動 Flask 伺服器。
-2. 開啟瀏覽器連線至 <http://localhost:5000>。
-
-### 操作指南
-1. **選擇模型**：在右側面板選擇預計分析的豆種。
-2. **即時監測**：點擊「開啟相機」後，啟動「即時偵測」。AI 將不斷分析視窗中的影像。
-3. **結果反饋**：系統將即時在預測面板更新結果；「Good」標示為綠色，「Bad」標示為紅色。
+### 2. 啟動服務
+執行以下指令啟動 Flask 伺服器：
+```bash
+python app.py
+```
+啟動後，請開啟瀏覽器連線至 http://localhost:5000。
 
 ---
 
-## 🖼️ 介面展示 | UI Showcase
+## 📖 操作指南 | Usage Guide
 
-### 專業儀表板 (Professional Dashboard)
-![Dashboard Screenshot](file:///C:/Users/dachen/.gemini/antigravity/brain/ffbbab78-2eac-4a9a-9e93-34db6a862fac/verify_new_ui_and_realtime_1774097174040.webp)
-*利用毛玻璃效果與暗色系配色，打造極具科技感的 AI 分類體驗。*
-
----
-
-## 📊 資料集類別 | Classes
-
-由我本人拍攝，透過 OpenCV 裁切後手工挑選。
-- `good`：外觀完整，顏色自然的好豆。
-- `bad`：破裂、霉變、色澤異常的瑕疵豆。
+1. **選擇模型**：在右側面板選擇要分析的豆種（如：宏都拉斯日曬、衣索比亞水洗）。
+2. **啟動相機**：點擊「開啟相機」按鈕獲取影像流。
+3. **即時偵測**：點擊「即時偵測」啟動 AI。系統將不斷分析視窗中的影像。
+4. **檢查結果**：
+   - <span style="color:green">**Good**</span>：代表良品豆，外觀完整。
+   - <span style="color:red">**Bad**</span>：代表瑕疵豆，包含破裂、霉變或色澤異常。
 
 ---
 
-## 👨‍💻 開發者資訊 | About the Developer
+## 🧠 技術細節 | Technical Deep Dive
 
-- 作者 | Author：dachen8173
-- 技術棧 | Stack：Python / PyTorch / Flask / WebRTC / Vanilla CSS
-- 聯絡方式 | Contact：op.dada.op@gmail.com
-- Instagram | [da_chen_527](https://www.instagram.com/da_chen_527) / [cofe_log](https://www.instagram.com/cofe_log)
+### 模型架構
+- **框架**：PyTorch
+- **架構**：Custom CNN (針對咖啡豆特徵進行優化，包含多層卷積與池化)
+- **已部署豆種**：
+  - 衣索比亞水洗豆 (Ethiopia Washed)
+  - 宏都拉斯日曬豆 (Honduras Natural)
 
----
-
-## 📜 授權 | License
-
-MIT License – 歡迎使用、改進並回饋社群！
-要時新增對應的 JSON 設定檔（詳見 `models/README.md`）。
-3. 執行 `python app.py` 啟動 Flask 伺服器。
-4. 開啟瀏覽器連線至 <http://localhost:5000>。
-5. 前端頁面提供模型清單、圖片預覽、分類結果與各類別機率，協助快速驗證模型效果。
+### 資料集類別
+由開發者親自拍攝並透過 OpenCV 裁切後手工挑選：
+- **Good (良品)**：外觀完整，顏色自然。
+- **Bad (瑕疵)**：破裂、霉變、色澤異常。
+  *(註：手工挑選，可能與絕對專業標準有異)*
 
 ---
 
-## 📊 資料集類別 | Classes
-由我本人拍攝，透過opencv裁切後手工挑選。
-- `good`：外觀完整，顏色自然的好豆(我本人挑選的，非絕對專業!)
-  *(good beans with intact and natural appearance)*
-  *(Note: Manually selected; may not be professionally certified)*  
-- `bad`：破裂、霉變、色澤異常的瑕疵豆(我本人挑選的，非絕對專業!)
-  *(defective beans with damage or discoloration)*
-  *(Note: Manually selected; may not be professionally certified)*
+## 📂 專案結構 | Project Structure
 
-## 🌱 咖啡豆類型 | Coffee Bean Types
-
-| 類型 | 處理方式 | 特色 |
-|------|----------|------|
-| 衣索比亞水洗豆 | Ethiopia Washed | 明亮酸度，花香調性 |
-| 肯亞日曬豆 | Kenya Natural | 濃郁果香，甜度豐富 |
-| 宏都拉斯日曬豆 | Honduras Natural | 平衡風味，巧克力調性 |
+```text
+Good-or-Bad-CoffeeBeans/
+├── models/             # 已訓練模型與 JSON 設定
+├── static/             # UI 素材與前端邏輯 (Glassmorphism)
+├── templates/          # 網頁模板 (index.html)
+├── app.py              # Flask 後端與推論 API
+├── train_all.py        # 自動化多豆種訓練腳本
+├── coffee_beans_data/  # 原始與增強資料集
+└── samplePhoto/        # 範例圖片與 Logo
+```
 
 ---
 
-## 🖼️ 圖示展示 | Sample Images
+## 🖼️ 展示空間 | Showcase
 
-### Good Bean
-<img src="./samplePhoto/goodsample.jpg" width="200"/>
-
-### Bad Bean
-<img src="./samplePhoto/badsample.jpg" width="200"/>
+### 範例對比
+<p align="center">
+  <img src="./samplePhoto/goodsample.jpg" width="300" alt="Good Bean"/>
+  <img src="./samplePhoto/badsample.jpg" width="300" alt="Bad Bean"/>
+  <br>
+  <em>左：良品豆 (Good) | 右：瑕疵豆 (Bad)</em>
+</p>
 
 ---
 
 ## 🎯 未來規劃 | Future Plans
 
-- [ ] 加入多視角融合（雙鏡頭）
-- [ ] 模型部署為 Web 或 Mobile 應用
-- [ ] 支援更多咖啡豆品種和處理方式
+- [ ] 支援多視角融合偵測（雙鏡頭技術）
+- [ ] 擴展至更多咖啡豆處理方式（如：蜜處理）
+- [ ] 優化手機瀏覽器端的執行效能
 
 ---
 
-## 👨‍💻 開發者資訊 | About the Developer
+## 👨‍💻 開發者與授權 | About & License
 
-- 作者 | Author：dachen8173
-- 技術棧 | Stack：Python / PyTorch / OpenCV / Jupyter
-- 聯絡方式 | Contact：op.dada.op@gmail.com
-- instagram | da_chen_527 / cofe_log
+- **作者**：dachen8173
+- **技術棧**：Python / PyTorch / Flask / WebRTC / Vanilla CSS
+- **聯絡方式**：op.dada.op@gmail.com
+- **Instagram**：[da_chen_527](https://www.instagram.com/da_chen_527) / [cofe_log](https://www.instagram.com/cofe_log)
 
----
-
-## 📜 授權 | License
-
-MIT License – 歡迎使用、改進並回饋社群！  
-MIT License – Feel free to use, modify, and contribute.
+本專案採用 **MIT License** 授權 – 歡迎開發者使用、改進並回饋社群！
