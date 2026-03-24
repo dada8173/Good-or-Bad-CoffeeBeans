@@ -1,1 +1,27 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Models
 *.pth
+
+# Dataset (部署 Hugging Face 不需要)
+coffee_beans_data/
+samplePhoto/goodsample.jpg
+samplePhoto/badsample.jpg
+
+# Environments
+.venv/
+venv/
+env/
+.env
+
+# Tooling
+.vscode/
+.idea/
+.ipynb_checkpoints/
