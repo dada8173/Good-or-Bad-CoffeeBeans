@@ -11,7 +11,7 @@ pinned: false
   <img src="./samplePhoto/logo.png" width="160"/>
 </p>
 
-<h1 align="center">☕ Cofe_log：專業級咖啡豆 AI 分類器</h1>
+<h1 align="center">☕ Cofe_log：咖啡豆 AI 分類器</h1>
 <p align="center"><b>Coffee Bean Classifier</b></p>
 
 <p align="center">
@@ -21,7 +21,7 @@ pinned: false
 </p>
 
 <p align="center">
-  利用深度學習模型與即時影像處理技術，精準辨識咖啡豆的良品與瑕疵。<br>
+  利用深度學習模型與即時影像處理技術，辨識咖啡豆的良品與瑕疵。<br>
   <i>Advanced Real-time Deep Learning System for Coffee Bean Quality Inspection.</i>
 </p>
 
