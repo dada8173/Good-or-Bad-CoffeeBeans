@@ -1,0 +1,68 @@
+{
+  "accuracy": 0.7807017543859649,
+  "macro_avg": {
+    "precision": 0.6930415263748597,
+    "recall": 0.7388888888888889,
+    "f1": 0.7076023391812865
+  },
+  "weighted_avg": {
+    "precision": 0.8135743398901294,
+    "recall": 0.7807017543859649,
+    "f1": 0.7922437673130194
+  },
+  "per_class": {
+    "bad": {
+      "precision": 0.48484848484848486,
+      "recall": 0.6666666666666666,
+      "f1": 0.5614035087719298,
+      "support": 24
+    },
+    "good": {
+      "precision": 0.9012345679012346,
+      "recall": 0.8111111111111111,
+      "f1": 0.8538011695906432,
+      "support": 90
+    }
+  },
+  "confusion_matrix": [
+    [
+      16,
+      8
+    ],
+    [
+      17,
+      73
+    ]
+  ],
+  "confusion_matrix_labels": [
+    "bad",
+    "good"
+  ],
+  "samples": 114,
+  "bean_type": "honduras_natural",
+  "architecture": "custom",
+  "input_size": 128,
+  "classes": [
+    "bad",
+    "good"
+  ],
+  "dataset_path": "coffee_beans_data/honduras_natural/corp_augmented_dataNoback",
+  "split": "80/20 random split of the augmented dataset",
+  "split_limitations": "The existing project split was preserved. Augmented variants may cross the train/validation boundary, and no independent test set is used.",
+  "total_samples": 566,
+  "train_samples": 452,
+  "validation_samples": 114,
+  "training_class_counts": {
+    "bad": 136,
+    "good": 316
+  },
+  "class_weights": {
+    "bad": 1.661764705882353,
+    "good": 0.7151898734177216
+  },
+  "epochs_completed": 40,
+  "best_epoch": 37,
+  "best_validation_loss": 0.5181131362915039,
+  "generated_at": "2026-09-08T14:27:32.126468+00:00",
+  "torch_version": "2.11.0+cu128"
+}

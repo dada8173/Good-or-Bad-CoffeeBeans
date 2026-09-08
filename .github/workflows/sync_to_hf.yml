@@ -10,12 +10,26 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
-          fetch-depth: 0
-          lfs: true
+          fetch-depth: 1
 
-      - name: Push to hub
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Hugging Face Hub client
+        run: pip install "huggingface_hub>=0.28.0"
+
+      - name: Upload application files to the Space
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        run: git push --force https://dada8173:$HF_TOKEN@huggingface.co/spaces/dada8173/coffee-bean-classifier main
+        run: >-
+          python -c "import os; from huggingface_hub import HfApi;
+          HfApi(token=os.environ['HF_TOKEN']).upload_folder(
+          repo_id='dada8173/coffee-bean-classifier', repo_type='space', folder_path='.',
+          allow_patterns=['README.md', 'LICENSE', 'Dockerfile', 'requirements.txt',
+          'app.py', 'templates/**', 'static/**', 'samplePhoto/**', 'models/README.md',
+          'models/*_best_model.json', 'models/*_metrics.json',
+          'models/*_history.json'])"

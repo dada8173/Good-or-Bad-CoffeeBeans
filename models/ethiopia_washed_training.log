@@ -1,42 +1,43 @@
-Starting training for ethiopia_washed...
-Epoch 1/40, Val Loss: 0.6925
-Epoch 2/40, Val Loss: 0.6919
-Epoch 3/40, Val Loss: 0.6921
-Epoch 4/40, Val Loss: 0.6920
-Epoch 5/40, Val Loss: 0.6862
-Epoch 6/40, Val Loss: 0.6775
-Epoch 7/40, Val Loss: 0.6697
-Epoch 8/40, Val Loss: 0.6583
-Epoch 9/40, Val Loss: 0.6467
-Epoch 10/40, Val Loss: 0.6265
-Epoch 11/40, Val Loss: 0.6087
-Epoch 12/40, Val Loss: 0.5895
-Epoch 13/40, Val Loss: 0.5726
-Epoch 14/40, Val Loss: 0.5584
-Epoch 15/40, Val Loss: 0.5408
-Epoch 16/40, Val Loss: 0.5301
-Epoch 17/40, Val Loss: 0.5377
-Epoch 18/40, Val Loss: 0.5153
-Epoch 19/40, Val Loss: 0.5106
-Epoch 20/40, Val Loss: 0.5342
-Epoch 21/40, Val Loss: 0.5120
-Epoch 22/40, Val Loss: 0.4997
-Epoch 23/40, Val Loss: 0.5044
-Epoch 24/40, Val Loss: 0.4861
-Epoch 25/40, Val Loss: 0.4908
-Epoch 26/40, Val Loss: 0.4833
-Epoch 27/40, Val Loss: 0.4670
-Epoch 28/40, Val Loss: 0.4595
-Epoch 29/40, Val Loss: 0.4861
-Epoch 30/40, Val Loss: 0.4581
-Epoch 31/40, Val Loss: 0.4388
-Epoch 32/40, Val Loss: 0.4793
-Epoch 33/40, Val Loss: 0.4528
-Epoch 34/40, Val Loss: 0.4374
-Epoch 35/40, Val Loss: 0.4698
-Epoch 36/40, Val Loss: 0.4526
-Epoch 37/40, Val Loss: 0.4207
-Epoch 38/40, Val Loss: 0.4267
-Epoch 39/40, Val Loss: 0.4503
-Epoch 40/40, Val Loss: 0.4462
+Starting training for ethiopia_washed on cuda; samples=712, train=569, validation=143
+Epoch 1/40 | train_loss=1.2632 train_acc=0.5062 | val_loss=0.6918 val_acc=0.6014
+Epoch 2/40 | train_loss=0.8212 train_acc=0.4253 | val_loss=0.6918 val_acc=0.4196
+Epoch 3/40 | train_loss=0.7085 train_acc=0.4446 | val_loss=0.6918 val_acc=0.5874
+Epoch 4/40 | train_loss=0.6630 train_acc=0.6186 | val_loss=0.6922 val_acc=0.5804
+Epoch 5/40 | train_loss=0.6709 train_acc=0.6011 | val_loss=0.6913 val_acc=0.5804
+Epoch 6/40 | train_loss=0.6531 train_acc=0.6450 | val_loss=0.6870 val_acc=0.6853
+Epoch 7/40 | train_loss=0.6359 train_acc=0.6784 | val_loss=0.6831 val_acc=0.4476
+Epoch 8/40 | train_loss=0.6216 train_acc=0.6309 | val_loss=0.6756 val_acc=0.4825
+Epoch 9/40 | train_loss=0.6096 train_acc=0.6678 | val_loss=0.6632 val_acc=0.5664
+Epoch 10/40 | train_loss=0.5977 train_acc=0.6889 | val_loss=0.6542 val_acc=0.5524
+Epoch 11/40 | train_loss=0.5923 train_acc=0.6731 | val_loss=0.6428 val_acc=0.5594
+Epoch 12/40 | train_loss=0.5688 train_acc=0.7083 | val_loss=0.6324 val_acc=0.5734
+Epoch 13/40 | train_loss=0.5543 train_acc=0.6872 | val_loss=0.6157 val_acc=0.6014
+Epoch 14/40 | train_loss=0.5415 train_acc=0.7100 | val_loss=0.5984 val_acc=0.6294
+Epoch 15/40 | train_loss=0.5300 train_acc=0.7487 | val_loss=0.5866 val_acc=0.6503
+Epoch 16/40 | train_loss=0.5125 train_acc=0.7750 | val_loss=0.5797 val_acc=0.6713
+Epoch 17/40 | train_loss=0.5040 train_acc=0.7680 | val_loss=0.5703 val_acc=0.6783
+Epoch 18/40 | train_loss=0.4848 train_acc=0.7926 | val_loss=0.5559 val_acc=0.6923
+Epoch 19/40 | train_loss=0.4834 train_acc=0.7627 | val_loss=0.5410 val_acc=0.7063
+Epoch 20/40 | train_loss=0.4781 train_acc=0.7909 | val_loss=0.5338 val_acc=0.7343
+Epoch 21/40 | train_loss=0.4612 train_acc=0.7961 | val_loss=0.5236 val_acc=0.7203
+Epoch 22/40 | train_loss=0.4397 train_acc=0.8014 | val_loss=0.5197 val_acc=0.7273
+Epoch 23/40 | train_loss=0.4363 train_acc=0.8330 | val_loss=0.5154 val_acc=0.7622
+Epoch 24/40 | train_loss=0.4276 train_acc=0.8330 | val_loss=0.5052 val_acc=0.7622
+Epoch 25/40 | train_loss=0.4065 train_acc=0.8418 | val_loss=0.4957 val_acc=0.7552
+Epoch 26/40 | train_loss=0.3975 train_acc=0.8401 | val_loss=0.4962 val_acc=0.7832
+Epoch 27/40 | train_loss=0.4042 train_acc=0.8225 | val_loss=0.4945 val_acc=0.7902
+Epoch 28/40 | train_loss=0.4025 train_acc=0.8137 | val_loss=0.4842 val_acc=0.7692
+Epoch 29/40 | train_loss=0.3945 train_acc=0.8524 | val_loss=0.4879 val_acc=0.7762
+Epoch 30/40 | train_loss=0.3658 train_acc=0.8594 | val_loss=0.4911 val_acc=0.7762
+Epoch 31/40 | train_loss=0.3633 train_acc=0.8576 | val_loss=0.4890 val_acc=0.7762
+Epoch 32/40 | train_loss=0.3689 train_acc=0.8506 | val_loss=0.4917 val_acc=0.7762
+Epoch 33/40 | train_loss=0.3572 train_acc=0.8594 | val_loss=0.4798 val_acc=0.7832
+Epoch 34/40 | train_loss=0.3379 train_acc=0.8787 | val_loss=0.4811 val_acc=0.7832
+Epoch 35/40 | train_loss=0.3369 train_acc=0.8664 | val_loss=0.4796 val_acc=0.7902
+Epoch 36/40 | train_loss=0.3247 train_acc=0.9016 | val_loss=0.4613 val_acc=0.7622
+Epoch 37/40 | train_loss=0.3241 train_acc=0.8770 | val_loss=0.4583 val_acc=0.7692
+Epoch 38/40 | train_loss=0.3122 train_acc=0.8858 | val_loss=0.4926 val_acc=0.7972
+Epoch 39/40 | train_loss=0.3201 train_acc=0.8858 | val_loss=0.4802 val_acc=0.8042
+Epoch 40/40 | train_loss=0.2953 train_acc=0.8998 | val_loss=0.4452 val_acc=0.7902
+Best epoch=40, val_loss=0.4452, val_accuracy=0.7902, macro_f1=0.7872
 Saved: models\ethiopia_washed_custom_Noback_best_model.pth

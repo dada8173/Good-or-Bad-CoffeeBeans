@@ -10,6 +10,7 @@ from typing import Dict, List, Optional
 
 import torch
 from flask import Flask, jsonify, render_template, request
+from huggingface_hub import hf_hub_download
 from PIL import Image, ImageOps
 from torch import nn
 from torchvision import transforms
@@ -22,6 +23,17 @@ app.config["MAX_CONTENT_LENGTH"] = 10 * 1024 * 1024  # 10 MB 上傳上限
 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 MODEL_DIR = Path(__file__).resolve().parent / "models"
+MODEL_REPO_ID = os.environ.get(
+    "HF_MODEL_REPO_ID", "dada8173/coffee-bean-classifier-models"
+)
+MODEL_REPO_REVISION = os.environ.get(
+    "HF_MODEL_REVISION", "040b9ac334a94707c3c028d23c6949411aea9fd9"
+)
+USE_LOCAL_MODELS = os.environ.get("USE_LOCAL_MODELS", "").lower() in {
+    "1",
+    "true",
+    "yes",
+}
 ALLOWED_EXTENSIONS = {"jpg", "jpeg", "png", "bmp", "webp"}
 
 BEAN_LABELS = {
@@ -51,6 +63,7 @@ class ModelInfo:
     img_size: int
     classes: List[str]
     path: Path
+    model_file: str
     description: Optional[str] = None
     config_path: Optional[Path] = None
 
@@ -62,6 +75,10 @@ class ModelInfo:
     def architecture_label(self) -> str:
         return ARCHITECTURE_LABELS.get(self.architecture, self.architecture)
 
+    @property
+    def has_weights(self) -> bool:
+        return self.path.exists()
+
     def to_metadata(self) -> Dict[str, object]:
         return {
             "key": self.key,
@@ -72,8 +89,8 @@ class ModelInfo:
             "architecture_label": self.architecture_label,
             "img_size": self.img_size,
             "classes": self.classes,
-            "model_file": self.path.name,
-            "has_weights": self.path.exists(),
+            "model_file": self.model_file,
+            "has_weights": self.has_weights,
             "description": self.description,
             "config_file": self.config_path.name if self.config_path else None,
         }
@@ -185,11 +202,40 @@ def build_model(architecture: str, num_classes: int, img_size: int) -> nn.Module
     raise ValueError(f"未知的模型架構：{architecture}")
 
 
+def resolve_model_path(config_path: Path, model_file: str) -> Path:
+    local_path = (config_path.parent / model_file).resolve()
+    if USE_LOCAL_MODELS or not MODEL_REPO_REVISION:
+        return local_path
+
+    try:
+        cached_path = hf_hub_download(
+            repo_id=MODEL_REPO_ID,
+            filename=model_file,
+            revision=MODEL_REPO_REVISION,
+        )
+    except Exception as exc:
+        logging.warning(
+            "無法從 Hugging Face Model repo 下載 %s@%s/%s：%s",
+            MODEL_REPO_ID,
+            MODEL_REPO_REVISION,
+            model_file,
+            exc,
+        )
+        if local_path.exists():
+            logging.warning("改用本機模型權重：%s", local_path)
+        return local_path
+    return Path(cached_path).resolve()
+
+
 def load_config_from_json(config_path: Path) -> Optional[ModelInfo]:
     try:
         data = json.loads(config_path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError) as exc:
         logging.warning("無法讀取模型設定 %s：%s", config_path.name, exc)
+        return None
+
+    if not isinstance(data, dict):
+        logging.warning("模型設定 %s 必須是 JSON object。", config_path.name)
         return None
 
     required_fields = {"bean_type", "architecture", "img_size", "classes"}
@@ -203,10 +249,8 @@ def load_config_from_json(config_path: Path) -> Optional[ModelInfo]:
         logging.warning("設定檔 %s 的 classes 格式不正確", config_path.name)
         return None
 
-    model_file = data.get("model_file")
-    model_path = (
-        (config_path.parent / model_file).resolve() if model_file else config_path.with_suffix(".pth").resolve()
-    )
+    model_file = data.get("model_file") or f"{config_path.stem}.pth"
+    model_path = resolve_model_path(config_path, model_file)
 
     display_name = data.get("display_name")
     if not display_name:
@@ -224,6 +268,7 @@ def load_config_from_json(config_path: Path) -> Optional[ModelInfo]:
         img_size=int(data["img_size"]),
         classes=[str(cls) for cls in classes],
         path=model_path,
+        model_file=model_file,
         description=data.get("description"),
         config_path=config_path,
     )
@@ -256,6 +301,7 @@ def infer_info_from_filename(model_path: Path) -> Optional[ModelInfo]:
         img_size=128,
         classes=classes,
         path=model_path.resolve(),
+        model_file=model_path.name,
         description=description,
         config_path=None,
     )
@@ -265,19 +311,17 @@ def load_model_infos() -> List[ModelInfo]:
     MODEL_DIR.mkdir(parents=True, exist_ok=True)
     infos: List[ModelInfo] = []
 
-    for config_path in sorted(MODEL_DIR.glob("*.json")):
+    for config_path in sorted(MODEL_DIR.glob("*_best_model.json")):
         info = load_config_from_json(config_path)
         if info:
             infos.append(info)
 
-    known_paths = {info.path for info in infos}
+    configured_keys = {info.key for info in infos}
 
     for model_path in sorted(MODEL_DIR.glob("*.pth")):
         resolved = model_path.resolve()
-        if resolved in known_paths:
-            continue
         info = infer_info_from_filename(resolved)
-        if info:
+        if info and info.key not in configured_keys:
             infos.append(info)
 
     unique_infos: Dict[str, ModelInfo] = {}
@@ -374,7 +418,7 @@ def api_predict():
         result = predict_image(model_key, image)
     except FileNotFoundError:
         info = MODEL_LOOKUP[model_key]
-        return jsonify({"error": f"找不到模型權重檔案：{info.path.name}"}), 500
+        return jsonify({"error": f"找不到模型權重檔案：{info.model_file}"}), 500
     except RuntimeError as exc:
         logging.exception("模型推論失敗：%s", exc)
         return jsonify({"error": f"模型推論失敗：{exc}"}), 500

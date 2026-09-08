@@ -1,5 +1,5 @@
 # 使用官方 Python 輕量版作為基底
-FROM python:3.9-slim
+FROM python:3.11-slim
 
 # 設定環境變數
 ENV PYTHONUNBUFFERED=1 \

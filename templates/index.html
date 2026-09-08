@@ -113,7 +113,9 @@
               <select id="model-select" class="custom-select">
                 <option value="" disabled selected>請選擇分析模型...</option>
                 {% for model in models %}
-                <option value="{{ model.key }}">{{ model.display_name }}</option>
+                <option value="{{ model.key }}"{% if not model.has_weights %} disabled{% endif %}>
+                  {{ model.display_name }}{% if not model.has_weights %}（權重不可用）{% endif %}
+                </option>
                 {% endfor %}
               </select>
             </div>
@@ -133,7 +135,7 @@
               </div>
 
               <div class="confidence-section">
-                <span class="label-heading" data-tooltip="AI 對此預測結果的確定程度">信賴區間 ⓘ</span>
+                <span class="label-heading" data-tooltip="模型的 Softmax 輸出分數，並非統計信賴區間">模型輸出機率 ⓘ</span>
                 <div id="probability-container" class="prob-bars">
                   <!-- JS 動態插入 -->
                 </div>

@@ -1,0 +1,7 @@
+-r requirements.txt
+jupyter>=1.0.0
+matplotlib>=3.8.0
+numpy>=1.26.0
+opencv-python>=4.9.0
+PySimpleGUI>=5.0.0
+scikit-learn>=1.4.0

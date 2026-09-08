@@ -1,7 +1,12 @@
 {
-    "bean_type": "ethiopia_washed",
-    "architecture": "custom",
-    "img_size": 128,
-    "classes": ["bad", "good"],
-    "display_name": "衣索比亞水洗豆 - Custom CNN (Noback)"
+  "bean_type": "ethiopia_washed",
+  "architecture": "custom",
+  "img_size": 128,
+  "classes": [
+    "bad",
+    "good"
+  ],
+  "model_file": "ethiopia_washed_custom_Noback_best_model.pth",
+  "metrics_file": "ethiopia_washed_metrics.json",
+  "display_name": "Ethiopia Washed - Custom CNN (Noback)"
 }

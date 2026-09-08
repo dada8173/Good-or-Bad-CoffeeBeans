@@ -1,52 +1,53 @@
-# 模型與設定檔說明
+# Model files
 
-將推論所需的模型權重（`.pth`）與對應設定檔（`.json`，可選）放置於此資料夾。
+This directory contains model metadata, training logs, epoch histories and validation metrics.
+Model weights (`*.pth`) are ignored by Git.
 
-## 1. 權重檔命名規則
+## Deployed models
 
-若沒有額外的設定檔，系統會嘗試從檔名推斷資訊。建議遵循訓練腳本的預設格式：
+- `ethiopia_washed_custom_Noback_best_model`
+- `honduras_natural_custom_Noback_best_model`
 
-```
-{豆種}_{模型架構}[_Noback]_best_model.pth
-```
+Kenya Natural remains work in progress and has no published model.
 
-例如：
+## Configuration
 
-- `ethiopia_washed_custom_best_model.pth`
-- `honduras_natural_resnet18_Noback_best_model.pth`
-
-沒有 JSON 設定時，系統會假設影像尺寸為 128、類別為 `bad / good`。
-
-## 2. JSON 設定檔（建議）
-
-建立與權重同名的 JSON（或自訂 `model_file` 欄位）可以明確指定模型資訊：
+Each deployed weight has a matching `*_best_model.json`:
 
 ```json
 {
-  "key": "ethiopia_washed_custom_best_model",
-  "display_name": "衣索比亞水洗豆 - Custom CNN (去背)",
   "bean_type": "ethiopia_washed",
   "architecture": "custom",
   "img_size": 128,
   "classes": ["bad", "good"],
-  "model_file": "ethiopia_washed_custom_best_model.pth",
-  "description": "使用去背資料訓練的 Custom CNN 模型"
+  "model_file": "ethiopia_washed_custom_Noback_best_model.pth",
+  "metrics_file": "ethiopia_washed_metrics.json",
+  "display_name": "Ethiopia Washed - Custom CNN (Noback)"
 }
 ```
 
-欄位說明：
+Supported architectures are `resnet18`, `convnext_tiny`, `custom` and `ultrafast`.
+The class order must match the output order used during training.
 
-- `key`：模型唯一識別碼（未填時預設為檔名）。
-- `display_name`：前端顯示名稱。
-- `bean_type`：豆種資料夾名稱，例如 `ethiopia_washed`。
-- `architecture`：支援 `resnet18`、`convnext_tiny`、`custom`、`ultrafast`。
-- `img_size`：訓練時的輸入尺寸。
-- `classes`：分類標籤，順序需與訓練時一致。
-- `model_file`（選填）：權重檔檔名，預設為同名 `.pth`。
-- `description`（選填）：顯示在前端的補充說明。
+## Loading weights
 
-## 3. 常見問題
+At startup, `app.py` downloads each matching `.pth` file from
+`dada8173/coffee-bean-classifier-models` using pinned commit
+`040b9ac334a94707c3c028d23c6949411aea9fd9`. `HF_MODEL_REVISION` can override
+the default when intentionally deploying another revision. Downloads use Hugging
+Face's version-aware local cache. If the Hub is unavailable, the application
+falls back to a matching local weight; set `USE_LOCAL_MODELS=1` to force that
+local path during development.
 
-- 權重檔不存在：前端會顯示警告，推論時會回傳錯誤訊息。
-- 類別數不符合：請確認 JSON `classes` 與模型輸出維度一致。
-- 需要更新模型列表：新增檔案後重新整理網頁即可載入。
+After adding or changing a configuration or weight, restart the Flask/Gunicorn
+process. Refreshing the browser alone does not rescan the directory.
+
+## Results artifacts
+
+- `*_training.log`: concise per-epoch console log.
+- `*_history.json`: train/validation loss and accuracy for every epoch.
+- `*_metrics.json`: aggregate and per-class metrics plus the confusion matrix.
+
+The current metrics preserve the project's existing random 80/20 split of the
+offline-augmented dataset. Read the limitations in the root README before using
+the values as a benchmark.

@@ -1,0 +1,68 @@
+{
+  "accuracy": 0.7902097902097902,
+  "macro_avg": {
+    "precision": 0.7857142857142857,
+    "recall": 0.791566265060241,
+    "f1": 0.7872023809523809
+  },
+  "weighted_avg": {
+    "precision": 0.7951139769321587,
+    "recall": 0.7902097902097902,
+    "f1": 0.7912712287712286
+  },
+  "per_class": {
+    "bad": {
+      "precision": 0.8441558441558441,
+      "recall": 0.7831325301204819,
+      "f1": 0.8124999999999999,
+      "support": 83
+    },
+    "good": {
+      "precision": 0.7272727272727273,
+      "recall": 0.8,
+      "f1": 0.761904761904762,
+      "support": 60
+    }
+  },
+  "confusion_matrix": [
+    [
+      65,
+      18
+    ],
+    [
+      12,
+      48
+    ]
+  ],
+  "confusion_matrix_labels": [
+    "bad",
+    "good"
+  ],
+  "samples": 143,
+  "bean_type": "ethiopia_washed",
+  "architecture": "custom",
+  "input_size": 128,
+  "classes": [
+    "bad",
+    "good"
+  ],
+  "dataset_path": "coffee_beans_data/ethiopia_washed/corp_augmented_dataNoback",
+  "split": "80/20 random split of the augmented dataset",
+  "split_limitations": "The existing project split was preserved. Augmented variants may cross the train/validation boundary, and no independent test set is used.",
+  "total_samples": 712,
+  "train_samples": 569,
+  "validation_samples": 143,
+  "training_class_counts": {
+    "bad": 333,
+    "good": 236
+  },
+  "class_weights": {
+    "bad": 0.8543543543543544,
+    "good": 1.2055084745762712
+  },
+  "epochs_completed": 40,
+  "best_epoch": 40,
+  "best_validation_loss": 0.4451611042022705,
+  "generated_at": "2026-09-08T14:27:10.375571+00:00",
+  "torch_version": "2.11.0+cu128"
+}
