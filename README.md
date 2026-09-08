@@ -39,9 +39,9 @@ pinned: false
 | 🚀 **Web 部署** | Flask、Gunicorn 與 Docker，可部署至 Hugging Face Spaces。 |
 | 🎨 **介面設計** | 暗色 Glassmorphism 儀表板，顯示模型輸出機率與架構資訊。 |
 
-## 🧠 Model & Dataset
+## 🧠 模型與資料集
 
-### Dataset
+### 資料集
 
 - 圖片由開發者自行拍攝，使用 OpenCV 依輪廓裁切成單顆咖啡豆。
 - 裁切圖片由開發者人工標示為 `good`、`bad`、`back` 或 `idontknow`。
@@ -49,60 +49,60 @@ pinned: false
 - Dataset 為私人資料，**不隨 GitHub repository 或 Hugging Face Model repository 發布**。
 - Ethiopia Washed 與 Honduras Natural 已完成訓練；Kenya Natural 仍在資料整理與標註階段，暫不發布模型。
 
-### Model
+### 模型
 
 | 項目 | 設定 |
 |---|---|
-| Framework | PyTorch |
-| Architecture | Custom CNN：3 個 Conv/BatchNorm/ReLU/MaxPool blocks + 256-unit fully connected layer |
-| Task | Binary classification (`bad`, `good`) |
-| Input | RGB, 128 × 128 |
-| Preprocessing | Pad to square, resize, tensor conversion, normalize with mean/std 0.5 |
-| Optimizer | Adam, learning rate `5e-5` |
-| Loss | Class-weighted cross entropy based on the training subset |
-| Training | Up to 40 epochs, early stopping patience 10 |
-| Split | Existing 80/20 random train/validation split |
+| 框架 | PyTorch |
+| 架構 | Custom CNN：3 個 Conv/BatchNorm/ReLU/MaxPool 區塊，加上 256-unit 全連接層 |
+| 任務 | 二元分類（`bad`、`good`） |
+| 輸入 | RGB，128 × 128 |
+| 前處理 | 補邊成正方形、縮放、轉換為 tensor，並以 mean/std 0.5 標準化 |
+| 最佳化器 | Adam，learning rate `5e-5` |
+| 損失函數 | 依訓練子集計算權重的交叉熵 |
+| 訓練 | 最多 40 epochs，early stopping patience 10 |
+| 切分 | 沿用既有 80/20 隨機訓練／驗證切分 |
 
-### Data augmentation
+### 資料增強
 
 離線資料增強由 `data_augment.ipynb` 執行，每張來源 crop 產生兩個版本，包含 color jitter、random grayscale、Gaussian blur、sharpness adjustment 與 Gaussian noise。
 
-## 📊 Validation Results
+## 📊 驗證結果
 
 以下結果由修正後的 best-checkpoint 保存流程重新訓練取得。數值來自現有 augmented dataset 的 80/20 random validation split。
 
-| Bean type | Validation samples | Accuracy | Macro precision | Macro recall | Macro F1 | Weighted F1 |
+| 咖啡豆類型 | 驗證樣本數 | Accuracy | Macro precision | Macro recall | Macro F1 | Weighted F1 |
 |---|---:|---:|---:|---:|---:|---:|
 | Ethiopia Washed | 143 | 79.02% | 78.57% | 79.16% | 78.72% | 79.13% |
 | Honduras Natural | 114 | 78.07% | 69.30% | 73.89% | 70.76% | 79.22% |
 
-### Per-class results
+### 各類別結果
 
-| Bean type | Class | Precision | Recall | F1 | Support |
+| 咖啡豆類型 | 類別 | Precision | Recall | F1 | 樣本數 |
 |---|---|---:|---:|---:|---:|
 | Ethiopia Washed | bad | 84.42% | 78.31% | 81.25% | 83 |
 | Ethiopia Washed | good | 72.73% | 80.00% | 76.19% | 60 |
 | Honduras Natural | bad | 48.48% | 66.67% | 56.14% | 24 |
 | Honduras Natural | good | 90.12% | 81.11% | 85.38% | 90 |
 
-Confusion matrices use rows as actual labels and columns as predicted labels in `[bad, good]` order:
+混淆矩陣以實際標籤為列、預測標籤為欄，順序皆為 `[bad, good]`：
 
 ```text
 Ethiopia Washed: [[65, 18], [12, 48]]
 Honduras Natural: [[16, 8], [17, 73]]
 ```
 
-> **Evaluation limitation:** To preserve the current project workflow, the split is performed after offline augmentation. Augmented variants of the same source crop may therefore appear in both training and validation sets. The validation set is also used for early stopping, and no independent test set is reported. These figures describe the current validation run and should not be treated as a leakage-free benchmark.
+> **評估限制：** 為保留目前專案流程，資料是在離線增強後才進行切分，因此同一來源 crop 的增強版本可能同時出現在訓練集與驗證集。驗證集也用於 early stopping，目前沒有獨立測試集。這些數字只代表本次驗證結果，不應視為完全排除資料洩漏的 benchmark。
 
-Honduras Natural remains weaker on the `bad` class, particularly precision. Accuracy alone would hide this behavior, so macro and per-class metrics are reported together.
+Honduras Natural 對 `bad` 類別的表現仍較弱，尤其是 precision。單看 accuracy 會掩蓋此問題，因此同時呈現 macro 與各類別指標。
 
-Machine-readable results are available in `models/*_metrics.json`; epoch histories are stored in `models/*_history.json`.
+機器可讀的結果位於 `models/*_metrics.json`，各 epoch 紀錄位於 `models/*_history.json`。
 
-## 🚀 Quick Start
+## 🚀 快速開始
 
-### Web application
+### Web 應用程式
 
-Python 3.10 or 3.11 is recommended.
+建議使用 Python 3.10 或 3.11。
 
 ```bash
 conda create -n coffee-beans-env python=3.10
@@ -111,43 +111,43 @@ pip install -r requirements.txt
 python app.py
 ```
 
-Open <http://localhost:5000> after the service starts.
+服務啟動後，開啟 <http://localhost:5000>。
 
-At startup, the application downloads its weights from `dada8173/coffee-bean-classifier-models` at pinned revision `c859bc6049e24649ca86bf4f5d2600d0fbec6198`. Hugging Face's cache prevents unchanged weights from being downloaded again. If the Hub is unavailable, the application falls back to matching local `models/*.pth` files. Set `USE_LOCAL_MODELS=1` for explicitly local development, or set `HF_MODEL_REVISION` only when intentionally testing another published revision. Public model downloads do not require an access token.
+應用程式啟動時，會從 `dada8173/coffee-bean-classifier-models` 的固定 revision `efc47d2ec57916c5ea152333bd801a07a6977f59` 下載權重。Hugging Face cache 會避免重複下載未變更的檔案；若 Hub 暫時無法使用，程式才會改用本機 `models/*.pth` 備援。需要強制使用本機模型時可設定 `USE_LOCAL_MODELS=1`；只有在刻意測試其他已發布版本時才應設定 `HF_MODEL_REVISION`。下載公開模型不需要 access token。
 
-### Training and notebooks
+### 訓練與 notebooks
 
 ```bash
 pip install -r requirements-dev.txt
 python train_all.py
 ```
 
-By default, `train_all.py` trains Ethiopia Washed and Honduras Natural only. Kenya Natural remains work in progress.
+`train_all.py` 預設只訓練 Ethiopia Washed 與 Honduras Natural；Kenya Natural 仍在開發中。
 
-## 📖 Usage
+## 📖 使用方式
 
-1. Select an available bean-specific model.
-2. Open the browser camera or upload a supported image.
-3. Enable live detection when using the camera.
-4. Review the predicted label and model output scores.
+1. 選擇對應咖啡豆類型的可用模型。
+2. 開啟瀏覽器相機，或上傳支援格式的圖片。
+3. 使用相機時可開啟即時辨識。
+4. 查看預測標籤與模型輸出分數。
 
-Browser camera access requires HTTPS or localhost and user permission.
+瀏覽器相機功能需要 HTTPS 或 localhost，並須取得使用者授權。
 
-## 📂 Project Structure
+## 📂 專案結構
 
 ```text
 Good-or-Bad-CoffeeBeans/
-├── models/             # Model metadata, logs, histories and validation metrics
-├── static/             # CSS, JavaScript and example assets
-├── templates/          # Flask HTML template
-├── app.py              # Web inference and model loading
-├── train_all.py        # Ethiopia/Honduras training and evaluation
-├── requirements.txt    # Web inference dependencies
-├── requirements-dev.txt# Training/notebook dependencies
-└── coffee_beans_data/  # Private local dataset; ignored by Git
+├── models/             # 模型設定、訓練紀錄與驗證指標
+├── static/             # CSS、JavaScript 與範例圖片
+├── templates/          # Flask HTML 模板
+├── app.py              # Web 推論與模型載入
+├── train_all.py        # Ethiopia／Honduras 訓練與評估
+├── requirements.txt    # Web 推論相依套件
+├── requirements-dev.txt# 訓練與 notebook 相依套件
+└── coffee_beans_data/  # 私人本機資料集；Git 會忽略此目錄
 ```
 
-## ⚠️ Limitations
+## ⚠️ 限制
 
 - Labels are manually assigned and are not a professional coffee-grading certification.
 - Each deployed model is specific to one bean type.
@@ -155,11 +155,11 @@ Good-or-Bad-CoffeeBeans/
 - Softmax output scores are not calibrated confidence intervals.
 - Kenya Natural is under development and has no published model.
 
-## 👨‍💻 Developer & License
+## 👨‍💻 開發者與授權
 
 - Author: dachen8173
 - Stack: Python / PyTorch / Flask / OpenCV / JavaScript
 - Contact: op.dada.op@gmail.com
 - Instagram: [da_chen_527](https://www.instagram.com/da_chen_527) / [cofe_log](https://www.instagram.com/cofe_log)
 
-The source code is released under the MIT License. The dataset is private and is not distributed with this project.
+原始碼採用 MIT License；資料集維持私人狀態，不隨本專案發布。

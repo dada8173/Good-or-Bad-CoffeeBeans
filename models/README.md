@@ -33,7 +33,7 @@ The class order must match the output order used during training.
 
 At startup, `app.py` downloads each matching `.pth` file from
 `dada8173/coffee-bean-classifier-models` using pinned commit
-`c859bc6049e24649ca86bf4f5d2600d0fbec6198`. `HF_MODEL_REVISION` can override
+`efc47d2ec57916c5ea152333bd801a07a6977f59`. `HF_MODEL_REVISION` can override
 the default when intentionally deploying another revision. Downloads use Hugging
 Face's version-aware local cache. If the Hub is unavailable, the application
 falls back to a matching local weight; set `USE_LOCAL_MODELS=1` to force that

@@ -27,7 +27,7 @@ MODEL_REPO_ID = os.environ.get(
     "HF_MODEL_REPO_ID", "dada8173/coffee-bean-classifier-models"
 )
 MODEL_REPO_REVISION = os.environ.get(
-    "HF_MODEL_REVISION", "c859bc6049e24649ca86bf4f5d2600d0fbec6198"
+    "HF_MODEL_REVISION", "efc47d2ec57916c5ea152333bd801a07a6977f59"
 )
 USE_LOCAL_MODELS = os.environ.get("USE_LOCAL_MODELS", "").lower() in {
     "1",
