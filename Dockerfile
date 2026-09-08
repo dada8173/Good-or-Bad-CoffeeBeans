@@ -20,7 +20,7 @@ COPY --chown=user requirements.txt .
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
-# 複製專案原始碼與模型，並確保權限正確
+# 複製應用程式檔案；私人資料與本機權重由 .dockerignore 排除
 COPY --chown=user . .
 
 # 暴露端口

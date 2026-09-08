@@ -1,4 +1,5 @@
 import base64
+import binascii
 import io
 import json
 import logging
@@ -20,6 +21,7 @@ logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 
 app = Flask(__name__)
 app.config["MAX_CONTENT_LENGTH"] = 10 * 1024 * 1024  # 10 MB 上傳上限
+MAX_IMAGE_PIXELS = 20_000_000
 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 MODEL_DIR = Path(__file__).resolve().parent / "models"
@@ -100,8 +102,23 @@ MODEL_CACHE: Dict[str, nn.Module] = {}
 TRANSFORM_CACHE: Dict[int, transforms.Compose] = {}
 
 
+@app.after_request
+def add_security_headers(response):
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Frame-Options"] = "DENY"
+    response.headers["Referrer-Policy"] = "no-referrer"
+    response.headers["Permissions-Policy"] = "camera=(self)"
+    return response
+
+
 def is_allowed_file(filename: str) -> bool:
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+def validate_image_size(image: Image.Image) -> None:
+    width, height = image.size
+    if width <= 0 or height <= 0 or width * height > MAX_IMAGE_PIXELS:
+        raise ValueError("影像尺寸不符合限制。")
 
 
 def pad_to_square(image: Image.Image, fill: int = 0) -> Image.Image:
@@ -347,7 +364,7 @@ def get_or_load_model(model_key: str) -> nn.Module:
         logging.info("載入模型：%s", info.display_name)
         model = build_model(info.architecture, len(info.classes), info.img_size)
         try:
-            state_dict = torch.load(info.path, map_location=DEVICE)
+            state_dict = torch.load(info.path, map_location=DEVICE, weights_only=True)
         except FileNotFoundError as exc:
             logging.error("找不到模型檔案：%s", info.path)
             raise exc
@@ -411,6 +428,7 @@ def api_predict():
 
     try:
         image = Image.open(file_storage.stream)
+        validate_image_size(image)
     except Exception:
         return jsonify({"error": "無法讀取圖片，請確認檔案是否為有效的影像格式。"}), 400
 
@@ -421,7 +439,7 @@ def api_predict():
         return jsonify({"error": f"找不到模型權重檔案：{info.model_file}"}), 500
     except RuntimeError as exc:
         logging.exception("模型推論失敗：%s", exc)
-        return jsonify({"error": f"模型推論失敗：{exc}"}), 500
+        return jsonify({"error": "模型推論失敗，請稍後再試。"}), 500
 
     return jsonify(result)
 
@@ -433,15 +451,15 @@ def api_predict_frame():
         return jsonify({"error": "尚未載入模型。"}), 400
 
     data = request.get_json()
-    if not data:
+    if not isinstance(data, dict):
         return jsonify({"error": "缺少資料體。"}), 400
 
     model_key = data.get("model_key")
     image_b64 = data.get("image")
 
-    if not model_key or model_key not in MODEL_LOOKUP:
+    if not isinstance(model_key, str) or model_key not in MODEL_LOOKUP:
         return jsonify({"error": "無效的模型 key。"}), 400
-    if not image_b64:
+    if not isinstance(image_b64, str) or not image_b64:
         return jsonify({"error": "缺少影像資料。"}), 400
 
     try:
@@ -449,13 +467,17 @@ def api_predict_frame():
         if "," in image_b64:
             image_b64 = image_b64.split(",")[1]
 
-        image_data = base64.b64decode(image_b64)
+        image_data = base64.b64decode(image_b64, validate=True)
         image = Image.open(io.BytesIO(image_data))
+        validate_image_size(image)
         result = predict_image(model_key, image)
         return jsonify(result)
+    except (binascii.Error, OSError, ValueError) as exc:
+        logging.warning("拒絕無效影像幀：%s", type(exc).__name__)
+        return jsonify({"error": "無法處理影像資料。"}), 400
     except Exception as exc:
         logging.exception("幀預測失敗：%s", exc)
-        return jsonify({"error": str(exc)}), 500
+        return jsonify({"error": "模型推論失敗，請稍後再試。"}), 500
 
 
 @app.get("/api/models")

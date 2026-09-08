@@ -1,0 +1,17 @@
+.git
+.github
+.codex
+.env
+.env.*
+.venv
+venv
+env
+__pycache__
+*.py[cod]
+*.pth
+coffee_beans_data
+models/legacy
+.ipynb_checkpoints
+*.ipynb
+requirements-dev.txt
+scripts
