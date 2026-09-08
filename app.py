@@ -105,7 +105,10 @@ TRANSFORM_CACHE: Dict[int, transforms.Compose] = {}
 @app.after_request
 def add_security_headers(response):
     response.headers["X-Content-Type-Options"] = "nosniff"
-    response.headers["X-Frame-Options"] = "DENY"
+    response.headers["Content-Security-Policy"] = (
+        "frame-ancestors 'self' https://huggingface.co "
+        "https://*.huggingface.co https://*.hf.space"
+    )
     response.headers["Referrer-Policy"] = "no-referrer"
     response.headers["Permissions-Policy"] = "camera=(self)"
     return response

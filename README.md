@@ -1,12 +1,3 @@
----
-title: Coffee Bean Classifier
-emoji: ☕
-colorFrom: yellow
-colorTo: red
-sdk: docker
-pinned: false
----
-
 <p align="center">
   <img src="./samplePhoto/logo.png" width="160" alt="Cofe_log logo"/>
 </p>
@@ -37,16 +28,20 @@ pinned: false
 | 🖼️ **影像前處理** | 使用 OpenCV 裁切單顆咖啡豆，推論時執行等比例補邊、縮放與標準化。 |
 | 📷 **瀏覽器相機** | 使用 MediaDevices `getUserMedia()` 取得相機影像，也支援靜態圖片上傳。 |
 | 🚀 **Web 部署** | Flask、Gunicorn 與 Docker，可部署至 Hugging Face Spaces。 |
-| 🎨 **介面設計** | 暗色 Glassmorphism 儀表板，顯示模型輸出機率與架構資訊。 |
 
 ## 🧠 模型與資料集
 
 ### 資料集
 
-- 圖片由開發者自行拍攝，使用 OpenCV 依輪廓裁切成單顆咖啡豆。
-- 裁切圖片由開發者人工標示為 `good`、`bad`、`back` 或 `idontknow`。
-- 已部署模型只使用 `good` 與 `bad` 類別；人工判定並非專業咖啡分級認證。
-- Dataset 為私人資料，**不隨 GitHub repository 或 Hugging Face Model repository 發布**。
+- 原始影像由作者自行拍攝，再使用 OpenCV 依輪廓裁切成單顆咖啡豆圖片。
+- 每張裁切圖片皆由作者依影像內容人工分類：
+  - `good`：外觀完整，依本專案的標註準則判定為良品。
+  - `bad`：可觀察到明顯異常，依本專案的標註準則判定為瑕疵豆。
+  - `back`：拍攝到咖啡豆背面，僅憑該角度不易判斷是否具有瑕疵。
+  - `idontknow`：影像無法清楚辨識、咖啡豆不完整，或資訊不足以可靠標註。
+- 已部署模型只使用可明確判定的 `good` 與 `bad` 類別；`back` 與 `idontknow` 不納入目前的二元分類訓練。
+- 本專案目前公開程式碼、模型權重與評估紀錄；自行拍攝的訓練影像尚未對外發布。
+- 上述標籤是本專案使用的人工判定，不代表專業咖啡分級認證。
 - Ethiopia Washed 與 Honduras Natural 已完成訓練；Kenya Natural 仍在資料整理與標註階段，暫不發布模型。
 
 ### 模型

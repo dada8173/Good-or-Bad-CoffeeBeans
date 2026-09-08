@@ -25,11 +25,4 @@ jobs:
       - name: Upload application files to the Space
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        run: >-
-          python -c "import os; from huggingface_hub import HfApi;
-          HfApi(token=os.environ['HF_TOKEN']).upload_folder(
-          repo_id='dada8173/coffee-bean-classifier', repo_type='space', folder_path='.',
-          allow_patterns=['README.md', 'LICENSE', 'Dockerfile', '.dockerignore', 'requirements.txt',
-          'app.py', 'templates/**', 'static/**', 'samplePhoto/**', 'models/README.md',
-          'models/*_best_model.json', 'models/*_metrics.json',
-          'models/*_history.json'])"
+        run: python scripts/sync_to_hf_space.py
