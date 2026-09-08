@@ -1,6 +1,7 @@
 ---
 library_name: pytorch
 pipeline_tag: image-classification
+license: mit
 tags:
   - coffee
   - computer-vision
@@ -43,4 +44,4 @@ These checkpoints are intended for demonstration and experimentation with the ac
 
 ## License
 
-No model-weight license has been declared yet. The source-code repository is licensed separately under MIT.
+The model weights are released under the MIT License. The source-code repository is also licensed under MIT.

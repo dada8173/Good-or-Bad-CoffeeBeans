@@ -113,7 +113,7 @@ python app.py
 
 Open <http://localhost:5000> after the service starts.
 
-At startup, the application downloads its weights from `dada8173/coffee-bean-classifier-models` at pinned revision `040b9ac334a94707c3c028d23c6949411aea9fd9`. Hugging Face's cache prevents unchanged weights from being downloaded again. If the Hub is unavailable, the application falls back to matching local `models/*.pth` files. Set `USE_LOCAL_MODELS=1` for explicitly local development, or set `HF_MODEL_REVISION` only when intentionally testing another published revision. Public model downloads do not require an access token.
+At startup, the application downloads its weights from `dada8173/coffee-bean-classifier-models` at pinned revision `c859bc6049e24649ca86bf4f5d2600d0fbec6198`. Hugging Face's cache prevents unchanged weights from being downloaded again. If the Hub is unavailable, the application falls back to matching local `models/*.pth` files. Set `USE_LOCAL_MODELS=1` for explicitly local development, or set `HF_MODEL_REVISION` only when intentionally testing another published revision. Public model downloads do not require an access token.
 
 ### Training and notebooks
 
