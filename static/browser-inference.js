@@ -1,6 +1,7 @@
 /* Standalone Pages transport: no prediction API or image upload. */
 (() => {
   const sessions = new Map();
+  let engine;
   const base = new URL('./', document.baseURI);
   const manifest = fetch(new URL('models.json', base)).then(response => {
     if (!response.ok) throw new Error('模型設定載入失敗，請重新整理。');
@@ -40,6 +41,18 @@
     if (!sessions.has(info.key)) {
       const pending = (async () => {
         const bytes = await modelBytes(info, signal, progress);
+        if (typeof DecompressionStream !== 'undefined') {
+          if (!engine) {
+            engine = (async () => {
+              const compressed = await modelBytes(info.runtime, signal,
+                message => progress(message.replace('模型', '辨識功能')));
+              const stream = new Response(compressed).body.pipeThrough(new DecompressionStream('gzip'));
+              ort.env.wasm.wasmBinary = await new Response(stream).arrayBuffer();
+            })();
+            engine.catch(() => { engine = undefined; });
+          }
+          await engine;
+        }
         progress('載入模型…');
         return ort.InferenceSession.create(bytes, { executionProviders: ['wasm'] });
       })();

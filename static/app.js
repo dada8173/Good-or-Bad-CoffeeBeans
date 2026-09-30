@@ -41,7 +41,7 @@ async function predict(file) {
   if(!file||!$('model-select').value||state.busy) return;
   const revision=state.revision; state.busy=true;
   $('status-badge').textContent='辨識中…'; feedback();
-  const controller=new AbortController(); const timeout=setTimeout(()=>controller.abort(),window.browserInference?180000:45000);
+  const controller=new AbortController(); const timeout=setTimeout(()=>controller.abort(),window.browserInference?600000:45000);
   const progress=message=>{if(revision===state.revision) $('status-badge').textContent=message;};
   try { const data=await requestPrediction(file,$('model-select').value,controller.signal,progress); if(revision===state.revision) showResult(data); }
   catch(error) { if(revision===state.revision) { $('status-badge').textContent='未完成'; feedback(error.name==='AbortError'?'等候時間過長，請重新選擇豆種或照片再試。':error.message); stopDetection(); } }

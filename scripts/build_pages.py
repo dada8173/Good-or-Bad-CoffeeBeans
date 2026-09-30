@@ -2,6 +2,7 @@
 
 import json
 import hashlib
+import gzip
 import os
 import shutil
 import sys
@@ -12,6 +13,7 @@ import onnx
 import onnxruntime as ort
 import torch
 from PIL import Image
+from onnxruntime.quantization import QuantType, quantize_dynamic
 
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = ROOT / "site-output"
@@ -55,6 +57,28 @@ def main():
             assert np.argmax(actual) == np.argmax(reference)
             errors.append(float(np.max(np.abs(actual - reference))))
         print(f"Verified {info.key}: max logit difference {max(errors):.8f}")
+        # Only quantize the dense layers; retain the convolution weights and
+        # preprocessing, and refuse a build if any reference label changes.
+        quantized = destination.with_suffix(".quant.onnx")
+        quantize_dynamic(str(destination), str(quantized),
+                         weight_type=QuantType.QInt8,
+                         op_types_to_quantize=["MatMul", "Gemm"])
+        quantized_session = ort.InferenceSession(str(quantized), providers=["CPUExecutionProvider"])
+        probability_errors = []
+        for image_path in sorted((ROOT / "static/assets/examples").glob("*/*.jpg")):
+            with Image.open(image_path) as image:
+                tensor = build_transform(info.img_size)(image.convert("RGB")).unsqueeze(0)
+            with torch.inference_mode():
+                reference = torch.softmax(model(tensor), dim=1).numpy()
+            logits = quantized_session.run(None, {"image": tensor.numpy()})[0]
+            exponentials = np.exp(logits - logits.max(axis=1, keepdims=True))
+            actual = exponentials / exponentials.sum(axis=1, keepdims=True)
+            np.testing.assert_allclose(actual, reference, rtol=0, atol=.01)
+            assert np.argmax(actual) == np.argmax(reference)
+            probability_errors.append(float(np.max(np.abs(actual - reference))))
+        del quantized_session, session
+        os.replace(quantized, destination)
+        print(f"Verified compact {info.key}: max probability difference {max(probability_errors):.6f}")
         manifest.append({
             "key": info.key, "file": "models/" + destination.name,
             "img_size": info.img_size, "classes": info.classes,
@@ -67,6 +91,15 @@ def main():
     distribution = ROOT / "node_modules/onnxruntime-web/dist"
     for name in ["ort.wasm.min.js", "ort-wasm-simd-threaded.wasm", "ort-wasm-simd-threaded.mjs"]:
         shutil.copyfile(distribution / name, runtime_dir / name)
+    compressed_runtime = runtime_dir / "ort-wasm-simd-threaded.wasm.gz"
+    compressed_runtime.write_bytes(gzip.compress(
+        (runtime_dir / "ort-wasm-simd-threaded.wasm").read_bytes(), mtime=0))
+    for info in manifest:
+        info["runtime"] = {
+            "file": "static/vendor/ort/" + compressed_runtime.name,
+            "bytes": compressed_runtime.stat().st_size,
+            "sha256": hashlib.sha256(compressed_runtime.read_bytes()).hexdigest(),
+        }
     with app.test_request_context("/"):
         html = app.jinja_env.get_template("index.html").render(models=MODEL_INFOS, browser_mode=True)
     # Relative assets work on project Pages URLs and on a local preview.

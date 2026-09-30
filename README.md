@@ -101,12 +101,13 @@ Honduras Natural 對 `bad` 類別的表現仍較弱，尤其是 precision。單�
 
 Pages 版使用 ONNX Runtime Web 在訪客的瀏覽器執行模型，支援照片、範例與相機輸入。
 照片不傳送到推論伺服器，也不需要啟動 Hugging Face Space。
-首次使用所選豆種時需下載約 34 MB 模型與執行套件；瀏覽器可快取模型。
+首次使用所選豆種時需下載約 9 MB 模型與執行套件；瀏覽器可快取模型。
 辨識速度取決於裝置效能，結果仍受模型與影像品質限制。
 
 `main` 分支的相關程式更新會觸發 Pages workflow：下載固定 revision 的公開模型權重，
 轉換成 ONNX、比對六張範例的 PyTorch 與 ONNX 結果，再部署靜態網站。
 模型輸入仍使用 RGB、黑色補邊、128 × 128 bilinear resize 與 mean/std 0.5。
+瀏覽器版本將全連接層做 INT8 量化以縮小下載量；部署前檢查六張範例分類一致，且機率差異小於 1 個百分點。
 
 本機建置與預覽：
 
