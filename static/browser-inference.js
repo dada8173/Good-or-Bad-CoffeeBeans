@@ -3,7 +3,7 @@
   const sessions = new Map();
   let engine;
   const base = new URL('./', document.baseURI);
-  const manifest = fetch(new URL('models.json', base)).then(response => {
+  const manifest = fetch(new URL('models.json', base), { cache: 'no-cache' }).then(response => {
     if (!response.ok) throw new Error('模型設定載入失敗，請重新整理。');
     return response.json();
   });
@@ -39,27 +39,46 @@
 
   async function sessionFor(info, signal, progress) {
     if (!sessions.has(info.key)) {
-      const pending = (async () => {
-        const bytes = await modelBytes(info, signal, progress);
+      const entry = { listeners: new Set(), message: '準備模型…' };
+      const report = message => {
+        entry.message = message;
+        entry.listeners.forEach(listener => listener(message));
+      };
+      // Background loading and inference share one download. An individual
+      // image request must not cancel a model that another request is using.
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 600000);
+      entry.promise = (async () => {
+        const model = modelBytes(info, controller.signal, report);
+        let runtime = Promise.resolve();
         if (typeof DecompressionStream !== 'undefined') {
           if (!engine) {
             engine = (async () => {
-              const compressed = await modelBytes(info.runtime, signal,
-                message => progress(message.replace('模型', '辨識功能')));
+              const compressed = await modelBytes(info.runtime, controller.signal,
+                message => report(message.replace('模型', '辨識功能')));
               const stream = new Response(compressed).body.pipeThrough(new DecompressionStream('gzip'));
               ort.env.wasm.wasmBinary = await new Response(stream).arrayBuffer();
             })();
             engine.catch(() => { engine = undefined; });
           }
-          await engine;
+          runtime = engine;
         }
-        progress('載入模型…');
-        return ort.InferenceSession.create(bytes, { executionProviders: ['wasm'] });
+        const [bytes] = await Promise.all([model, runtime]);
+        report('載入模型…');
+        const session = await ort.InferenceSession.create(bytes, { executionProviders: ['wasm'] });
+        report('模型已就緒');
+        return session;
       })();
-      sessions.set(info.key, pending);
-      pending.catch(() => sessions.delete(info.key));
+      sessions.set(info.key, entry);
+      entry.promise.then(() => clearTimeout(timeout), () => {
+        clearTimeout(timeout); controller.abort(); sessions.delete(info.key);
+      });
     }
-    return sessions.get(info.key);
+    const entry = sessions.get(info.key);
+    entry.listeners.add(progress);
+    progress(entry.message);
+    try { return await entry.promise; }
+    finally { entry.listeners.delete(progress); }
   }
 
   // Pillow-compatible separable bilinear resize with antialiasing and
@@ -126,6 +145,11 @@
 
   window.browserInference = {
     prepareImage,
+    async preload(modelKey, progress = () => {}) {
+      const info = (await manifest).find(model => model.key === modelKey);
+      if (!info) throw new Error('找不到所選模型。');
+      return sessionFor(info, undefined, progress);
+    },
     async predict(file, modelKey, signal, progress) {
       const info = (await manifest).find(model => model.key === modelKey);
       if (!info) throw new Error('找不到所選模型。');

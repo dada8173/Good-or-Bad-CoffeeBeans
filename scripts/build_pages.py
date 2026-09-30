@@ -108,6 +108,9 @@ def main():
                         '<script src="./static/vendor/ort/ort.wasm.min.js"></script>'
                         '<script src="./static/browser-inference.js"></script>'
                         '<script src="./static/app.js">')
+    for name in ["app.js", "browser-inference.js", "styles.css"]:
+        version = hashlib.sha256((OUTPUT / "static" / name).read_bytes()).hexdigest()[:12]
+        html = html.replace(f'"./static/{name}"', f'"./static/{name}?v={version}"')
     (OUTPUT / "index.html").write_text(html, encoding="utf-8")
     (OUTPUT / "models.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")
     (OUTPUT / ".nojekyll").touch()

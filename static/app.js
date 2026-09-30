@@ -2,6 +2,24 @@
 const $ = id => document.getElementById(id);
 const state = {source:'photo', stream:null, detecting:false, busy:false, timer:null, file:null, url:null, revision:0};
 const labels = {good:'良品', bad:'瑕疵豆'};
+let modelLoadRevision=0;
+async function warmModel() {
+  if(!window.browserInference||!$('model-select').value) return;
+  const revision=++modelLoadRevision;
+  const status=$('model-load-status');
+  try {
+    await window.browserInference.preload($('model-select').value,message=>{
+      if(revision===modelLoadRevision) status.textContent=message;
+    });
+    if(revision===modelLoadRevision) status.textContent='模型已就緒';
+  } catch(error) {
+    if(revision!==modelLoadRevision) return;
+    status.textContent='模型載入失敗，請檢查網路。 ';
+    const retry=document.createElement('button');
+    retry.type='button'; retry.textContent='重新載入'; retry.className='preload-retry';
+    retry.addEventListener('click',warmModel);status.append(retry);
+  }
+}
 function feedback(message='') { $('feedback').textContent=message; }
 function resetResult() {
   document.querySelector('.result-panel').removeAttribute('data-result');
@@ -113,6 +131,7 @@ $('model-select').addEventListener('change',()=>{
   state.revision++; resetResult(); const option=$('model-select').selectedOptions[0];
   $('selected-bean').textContent=option.textContent; $('info-arch').textContent=option.dataset.arch;
   $('info-size').textContent=`${option.dataset.size} × ${option.dataset.size}`; $('mode-toggle-btn').disabled=!state.stream;
+  warmModel();
   if(state.source==='photo') predict(state.file); else stopDetection();
 });
 for(const type of ['dragenter','dragover','dragleave','drop']) $('drop-zone').addEventListener(type,event=>{
@@ -129,3 +148,10 @@ document.querySelectorAll('.example-thumb').forEach(button=>button.addEventListe
   }catch(error){feedback(error.message);}
 }));
 window.addEventListener('pagehide',stopCamera);
+if(window.browserInference) {
+  const status=document.createElement('p');status.id='model-load-status';status.className='model-load-status';
+  status.setAttribute('role','status');status.setAttribute('aria-live','polite');
+  $('model-select').after(status);
+  const first=Array.from($('model-select').options).find(option=>option.value&&!option.disabled);
+  if(first) {$('model-select').value=first.value;$('model-select').dispatchEvent(new Event('change'));}
+}
