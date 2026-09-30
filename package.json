@@ -1,0 +1,10 @@
+{
+  "name": "cofe-log-pages",
+  "private": true,
+  "scripts": {
+    "build": "python scripts/build_pages.py"
+  },
+  "dependencies": {
+    "onnxruntime-web": "1.30.0"
+  }
+}

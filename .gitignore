@@ -25,3 +25,7 @@ env/
 .vscode/
 .idea/
 .ipynb_checkpoints/
+
+# Generated browser demo and dependencies
+node_modules/
+site-output/

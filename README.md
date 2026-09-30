@@ -95,7 +95,50 @@ Honduras Natural 對 `bad` 類別的表現仍較弱，尤其是 precision。單�
 
 ## 🚀 快速開始
 
+### GitHub Pages Demo
+
+[開啟咖啡豆分類 Demo](https://dada8173.github.io/Good-or-Bad-CoffeeBeans/)
+
+Pages 版使用 ONNX Runtime Web 在訪客的瀏覽器執行模型，支援照片、範例與相機輸入。
+照片不傳送到推論伺服器，也不需要啟動 Hugging Face Space。
+首次使用所選豆種時需下載約 34 MB 模型與執行套件；瀏覽器可快取模型。
+辨識速度取決於裝置效能，結果仍受模型與影像品質限制。
+
+`main` 分支的相關程式更新會觸發 Pages workflow：下載固定 revision 的公開模型權重，
+轉換成 ONNX、比對六張範例的 PyTorch 與 ONNX 結果，再部署靜態網站。
+模型輸入仍使用 RGB、黑色補邊、128 × 128 bilinear resize 與 mean/std 0.5。
+
+本機建置與預覽：
+
+```bash
+python -m pip install torch==2.14.0 torchvision==0.29.0 --index-url https://download.pytorch.org/whl/cpu
+python -m pip install -r requirements-pages.txt
+npm ci --ignore-scripts
+python scripts/build_pages.py
+python -m http.server 8767 --bind localhost --directory site-output
+```
+
+開啟 `http://localhost:8767/`。產出的 `site-output/` 包含網頁、ONNX 模型與本機託管的執行套件，
+不需要 Flask API。部署使用 GitHub Actions，Pages 的來源設定為 GitHub Actions。
+
 ### Web 應用程式
+
+新版 Demo 可直接使用本機 `models/` 中的權重執行，不需要連線到 Hugging Face Space。
+在已安裝 `requirements.txt` 的 Python 環境中執行：
+
+```bash
+python scripts/run_demo.py
+```
+
+開啟 `http://127.0.0.1:8766/`，選擇豆種後可上傳照片、點選範例，或切換相機進行連續辨識。
+可使用 `--port` 指定其他連接埠。相機需要瀏覽器權限；遠端使用時需 HTTPS。
+這個啟動方式使用 Flask 後端；GitHub Pages 使用上面的瀏覽器推論版。
+
+本機模型與 API 的整合檢查：
+
+```bash
+python -m unittest discover -s tests
+```
 
 建議使用 Python 3.10 或 3.11。
 
